@@ -1,0 +1,10 @@
+<nav id="scvo-tab-bar" class="mdc-tab-bar">
+  <a class="mdc-tab{{#if (contains @root.request.url.hostname 'scvo.')}} mdc-tab--active{{/if}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{else}}/{{/unless}}"><span class="mdc-tab--label">SCVO</span></a>
+  <a class="mdc-tab{{#if (contains @root.request.url.hostname 'goodmoves.')}} mdc-tab--active{{/if}}" href="https://goodmoves.com"><span class="mdc-tab--label">Goodmoves</span></a>
+  <a class="mdc-tab{{#if (contains @root.request.url.hostname 'thirdforcenews.')}} mdc-tab--active{{/if}}" href="https://thirdforcenews.org.uk"><span class="mdc-tab--label">TFN</span></a>
+  <a class="mdc-tab" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{/unless}}/scottish-charity-awards"><span class="mdc-tab--label">Scottish Charity Awards</span></a>
+  <a class="mdc-tab" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{/unless}}/the-gathering-2020"><span class="mdc-tab--label">The Gathering</span></a>
+  <a class="mdc-tab pull-right brand-logo" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{else}}/{{/unless}}" title="Scottish Council for Voluntary Organisations">
+    <img src="{{~>asset_url url='images/logos/scvo-inverse.png'}}" alt="Scottish Council for Voluntary Organisations" />
+  </a>
+</nav>
