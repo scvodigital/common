@@ -1,0 +1,19 @@
+{
+  "name": "@scvo/common",
+  "version": "0.0.1",
+  "description": "Common JS components, CSS, and Templates used across our sites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scvodigital/common.git"
+  },
+  "author": "Matthew Wilkes (SCVO)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/scvodigital/common/issues"
+  },
+  "homepage": "https://github.com/scvodigital/common#readme"
+}
