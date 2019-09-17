@@ -7,7 +7,7 @@ const admin = require('firebase-admin');
 const isGzip = require('is-gzip');
 const stringify = require('json-stringify-safe');
 
-const firebaseServiceAccount = require('./secret.json');
+const firebaseServiceAccount = require(path.join(__dirname, 'secret.json'));
 
 const FIREBASE_ROOT = '/contexts-new/' + process.env.SITE;
 const BUILD_DIR = path.join(__dirname, 'build');
