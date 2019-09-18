@@ -10,7 +10,10 @@ const stringify = require('json-stringify-safe');
 const firebaseServiceAccount = require('../../../secret.json');
 
 const FIREBASE_ROOT = '/contexts-new/' + process.env.SITE;
-const BUILD_DIR = path.join(__dirname, 'build');
+const BUILD_DIR = path.join(__dirname, '../../../build');
+
+console.log('BUILD_DIR:', BUILD_DIR);
+
 const BUCKET = 'scvo-assets';
 const DESTINATION_DIR = 'test/' + process.env.SITE;
 
