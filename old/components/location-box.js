@@ -8,6 +8,8 @@ export class LocationBoxComponent {
     this.textbox = $(textbox);
     this.config = this.textbox.data('location-search');
     this.la = $(this.config.laSelector);
+    this.tsiArea = $(this.config.tsiAreaSelector);
+    this.tsiContact = $(this.config.tsiContactSelector);
     this.lat = $(this.config.latSelector);
     this.lng = $(this.config.lngSelector);
     this.ls = $(this.config.locationServicesSelector);
@@ -77,6 +79,8 @@ export class LocationBoxComponent {
           ev.preventDefault();
         } else if (!this.defaultOption || !this.textbox.val()) {
           this.la.val('');
+          this.tsiArea.val('');
+          this.tsiContact.val('');
           this.lat.val('');
           this.lng.val('');
         } else if (this.defaultOption) {
@@ -114,6 +118,8 @@ export class LocationBoxComponent {
             break;
           default:
             this.la.val('');
+            this.tsiArea.val('');
+            this.tsiContact.val('');
             this.lat.val('');
             this.lng.val('');
             this.selected = false;
@@ -170,8 +176,11 @@ export class LocationBoxComponent {
   typeaheadSelect(ev, suggestion) {
     // console.log('typeaheadSelect', ev, suggestion);
     if (suggestion && suggestion.point && suggestion.point.lat) {
-      // console.log(suggestion);
+      console.log(suggestion);
       this.textbox.typeahead('val', suggestion.display);
+      this.la.val(suggestion.district);
+      this.tsiArea.val(suggestion.tsiArea);
+      this.tsiContact.val(suggestion.tsiContact);
       this.la.val(suggestion.district);
       this.lat.val(suggestion.point.lat);
       this.lng.val(suggestion.point.lon);
@@ -179,6 +188,8 @@ export class LocationBoxComponent {
     } else {
       this.textbox.typeahead('val', '');
       this.la.val('');
+      this.tsiArea.val('');
+      this.tsiContact.val('');
       this.lat.val('');
       this.lng.val('');
       this.selected = false;
