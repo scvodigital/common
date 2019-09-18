@@ -16,6 +16,7 @@ elif [ $LOCAL = $REMOTE ]; then
   echo "STEP 0 of 7: Hold on to your butts"
   echo "STEP 1 of 7: Cleaning .travis.yml of any old encryption tasks"
   sed -i.bak '/before_install:/,/install:/{//p;d;}' .travis.yml
+  rm .travis.yml.bak
   echo "STEP 2 of 7: Encrypting secret.json"
   travis encrypt-file secret.json --add --force
   echo "STEP 3 of 7: Committing encrypted secret and updated Travis config to Git"
