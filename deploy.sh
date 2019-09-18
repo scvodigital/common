@@ -6,39 +6,42 @@ REMOTE=$(git rev-parse "$UPSTREAM")
 BASE=$(git merge-base @ "$UPSTREAM")
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 REPO=$(basename `git rev-parse --show-toplevel`)
+PINK='\033[1;35m'
+RED='\033[0;31m'
+NC='\033[0m'
 
 if [ "$BRANCH" != "development" ]; then
-  echo "CANNOT DEPLOY: You can only deploy from the 'development' branch"
+  echo -e "${RED}CANNOT DEPLOY: You can only deploy from the 'development' branch${NC}"
 elif [[ `git status --porcelain` ]]; then
-  echo "CANNOT DEPLOY: There are local changes"
+  echo -e "${RED}CANNOT DEPLOY: There are local changes${NC}"
 elif [ $LOCAL = $REMOTE ]; then
-  echo "DEPLOYING"
-  echo "STEP 0 of 7: Hold on to your butts"
-  echo "STEP 1 of 7: Cleaning .travis.yml of any old encryption tasks"
+  echo -e "${PINK}DEPLOYING${NC}"
+  echo -e "${PINK}STEP 0 of 7: Hold on to your butts${NC}"
+  echo -e "${PINK}STEP 1 of 7: Cleaning .travis.yml of any old encryption tasks${NC}"
   sed -i.bak '/before_install:/,/install:/{//p;d;}' .travis.yml
   rm .travis.yml.bak
-  echo "STEP 2 of 7: Encrypting secret.json"
+  echo -e "${PINK}STEP 2 of 7: Encrypting secret.json${NC}"
   travis encrypt-file secret.json --add --force
-  echo "STEP 3 of 7: Committing encrypted secret and updated Travis config to Git"
+  echo -e "${PINK}STEP 3 of 7: Committing encrypted secret and updated Travis config to Git${NC}"
   git add secret.json.enc .travis.yml
   git commit -m "Updated secret.json"
-  echo "STEP 4 of 7: Bumping package version number and generating Git tag"
+  echo -e "${PINK}STEP 4 of 7: Bumping package version number and generating Git tag${NC}"
   npm version patch
-  echo "STEP 5 of 7: Pushing all previous changes to 'development' branch"
+  echo -e "${PINK}STEP 5 of 7: Pushing all previous changes to 'development' branch${NC}"
   git push
-  echo "STEP 6 of 7: Bringing 'production' branch up-to-date with 'development'"
+  echo -e "${PINK}STEP 6 of 7: Bringing 'production' branch up-to-date with 'development'${NC}"
   git checkout production
   git pull
   git pull origin development
   git push
-  echo "STEP 7 of 7: Navigating back to 'development'"
+  echo -e "${PINK}STEP 7 of 7: Navigating back to 'development'${NC}"
   git checkout development
-  echo "FINISHED LOCAL DEPLOYMENT TASKS"
-  echo "Navigate to https://travis-ci.org/scvodigital/$REPO to watch your deployment in the cloud!"
+  echo -e "${PINK}FINISHED LOCAL DEPLOYMENT TASKS${NC}"
+  echo -e "${PINK}Navigate to https://travis-ci.org/scvodigital/$REPO to watch your deployment in the cloud!${NC}"
 elif [ $LOCAL = $BASE ]; then
-  echo "CANNOT DEPLOY: Need to pull"
+  echo -e "${RED}CANNOT DEPLOY: Need to pull${NC}"
 elif [ $REMOTE = $BASE ]; then
-  echo "CANNOT DEPLOY: Need to push"
+  echo -e "${RED}CANNOT DEPLOY: Need to push${NC}"
 else
-  echo "CANNOT DEPLOY: Diverged"
+  echo -e "${RED}CANNOT DEPLOY: Diverged${NC}"
 fi
