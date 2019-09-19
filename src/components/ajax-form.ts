@@ -86,6 +86,8 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
         }
 
         ajaxSettings.url = parsed.href;
+
+        $.ajax(ajaxSettings);
       } catch (err) {
         this.isLoading = false;
         reject(err);
