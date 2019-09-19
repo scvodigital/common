@@ -32,11 +32,11 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
 
     console.log(url, method, data);
 
-    //this.widget.navigationManager.navigate(url, method, data, this.onSuccess.bind(this), this.onError.bind(this)).then(() => {
-    //  console.log('Submitting', url, method, data);
-    //}).catch(err => {
-    //  console.error('Failed to submit', err);
-    //});
+    this.navigate(url, method, data, this.onSuccess.bind(this), this.onError.bind(this)).then(() => {
+      console.log('Submitting', url, method, data);
+    }).catch(err => {
+      console.error('Failed to submit', err);
+    });
   }
 
   navigate(url: string, method: string = 'GET', data: any = {}, successCallback?: SuccessCallback, errorCallback?: ErrorCallback): Promise<void> {
