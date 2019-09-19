@@ -22,6 +22,10 @@ export class ComponentManager {
   componentRegistry: ComponentRegistry = {};
   clock = window.requestAnimationFrame(this.tick.bind(this));
 
+  constructor() {
+    this.requestUpdate();
+  }
+
   async registerComponents() {
     componentHandler.upgradeDom();
     const componentElements = Array.from($('[data-component]')).map(item => $(item));
