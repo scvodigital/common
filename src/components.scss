@@ -1,10 +1,10 @@
 $unit:1rem;
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '~../node_modules/material-design-lite/dist/material.blue_grey-blue.min';
-@import "~../node_modules/leaflet/dist/leaflet.css";
-@import url("../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css");
-@import url("../node_modules/leaflet.markercluster/dist/MarkerCluster.css");
+@import url('./node_modules/material-design-lite/dist/material.blue_grey-blue.min');
+@import url("./node_modules/leaflet/dist/leaflet.css");
+@import url("./node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css");
+@import url("./node_modules/leaflet.markercluster/dist/MarkerCluster.css");
 
 .multi-select .mdl-menu {
   overflow: auto;
