@@ -2,9 +2,10 @@
   "name": "@scvo/common",
   "version": "0.0.1",
   "description": "Common JS components, CSS, and Templates used across our sites",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

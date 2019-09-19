@@ -28,11 +28,13 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
       DomManipulator(this.config.onSubmitRules, this.element, this.getContext());
     }
 
-    this.widget.navigationManager.navigate(url, method, data, this.onSuccess.bind(this), this.onError.bind(this)).then(() => {
-      console.log('Submitting', url, method, data);
-    }).catch(err => {
-      console.error('Failed to submit', err);
-    });
+    console.log(url, method, data);
+
+    //this.widget.navigationManager.navigate(url, method, data, this.onSuccess.bind(this), this.onError.bind(this)).then(() => {
+    //  console.log('Submitting', url, method, data);
+    //}).catch(err => {
+    //  console.error('Failed to submit', err);
+    //});
   }
 
   onSuccess(response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) {
