@@ -50,7 +50,7 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
       let ajaxSettings: JQueryAjaxSettings = {};
 
       try {
-        const parsed = new URL(url, window.location.host);
+        const parsed = new URL(url);
         parsed.host = window.location.host;
 
         ajaxSettings = {
@@ -88,6 +88,7 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
 
         ajaxSettings.url = parsed.href;
       } catch (err) {
+        this.isLoading = false;
         reject(err);
       }
     });
