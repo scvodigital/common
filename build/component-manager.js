@@ -35,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 require('material-design-lite');
-require('./components.scss');
 var ComponentManager = /** @class */ (function () {
     function ComponentManager(components) {
         this.components = {};

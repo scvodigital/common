@@ -1,7 +1,6 @@
 import { BaseComponent } from './components/base-component';
 
 require('material-design-lite');
-require('./components.scss');
 
 export class ComponentManager {
   components: { [name: string]: any } = {};
