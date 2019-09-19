@@ -46,6 +46,13 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
         loader: 'url-loader'
+      },
+      {
+        test: require.resolve('jquery'),
+        use: [{
+            loader: 'expose-loader',
+            options: '$'
+        }]
       }
     ]
   },
