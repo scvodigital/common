@@ -1,25 +1,26 @@
 import { BaseComponent } from './components/base-component';
 
-export { AjaxForm } from './components/ajax-form';
-export { DomManipulatorTrigger } from './components/dom-manipulator-trigger';
-export { LeafletMap } from './components/leaflet-map';
-export { MultiSelect } from './components/multi-select';
-export { RemoteContent } from './components/remote-content';
-export { Typeahead } from './components/typeahead';
+import { AjaxForm } from './components/ajax-form';
+import { DomManipulatorTrigger } from './components/dom-manipulator-trigger';
+import { LeafletMap } from './components/leaflet-map';
+import { MultiSelect } from './components/multi-select';
+import { RemoteContent } from './components/remote-content';
+import { Typeahead } from './components/typeahead';
 
 require('material-design-lite');
 require('./components.scss');
 
 export class ComponentManager {
-  components: { [name: string]: any } = {};
+  components: { [name: string]: any } = {
+    AjaxForm,
+    DomManipulatorTrigger,
+    LeafletMap,
+    MultiSelect,
+    RemoteContent,
+    Typeahead
+  };
   componentRegistry: ComponentRegistry = {};
   clock = window.requestAnimationFrame(this.tick.bind(this));
-
-  constructor(components: any[]) {
-    for (const component of components) {
-      this.components[component.name] = component as typeof BaseComponent;
-    }
-  }
 
   async registerComponents() {
     componentHandler.upgradeDom();
@@ -98,3 +99,9 @@ export class ComponentManager {
 export interface ComponentRegistry {
   [element: string]: BaseComponent<any>;
 }
+
+(() => {
+  window.addEventListener('DOMContentLoaded', () => {
+    (window as any).ComponentManager = new ComponentManager();
+  });
+})();
