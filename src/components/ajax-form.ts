@@ -50,8 +50,7 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
       let ajaxSettings: JQueryAjaxSettings = {};
 
       try {
-        const parsed = new URL(url);
-        parsed.host = window.location.host;
+        const parsed = url.match(/^https?:/) ? new URL(url) : new URL(url, window.location.origin);
 
         ajaxSettings = {
           async: false,
