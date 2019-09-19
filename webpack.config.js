@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   devtool: 'source-map',
   entry: path.join(__dirname, 'src', 'component-manager.ts'),
   output: {
-    path: path.join(__dirname, 'build')
+    path: path.join(__dirname, 'build'),
+    filename: 'component-manager.js'
   },
   module: {
     rules: [
@@ -56,6 +56,10 @@ module.exports = {
     }
   },
   plugins: [
-
+    new CompressionWebpackPlugin({
+      filename: (info) => {
+        return info.path.replace(/.gz$/, '')
+      }
+    })
   ]
 };

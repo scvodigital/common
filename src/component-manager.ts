@@ -1,6 +1,14 @@
 import { BaseComponent } from './components/base-component';
 
+export { AjaxForm } from './components/ajax-form';
+export { DomManipulatorTrigger } from './components/dom-manipulator-trigger';
+export { LeafletMap } from './components/leaflet-map';
+export { MultiSelect } from './components/multi-select';
+export { RemoteContent } from './components/remote-content';
+export { Typeahead } from './components/typeahead';
+
 require('material-design-lite');
+require('./components.scss');
 
 export class ComponentManager {
   components: { [name: string]: any } = {};
