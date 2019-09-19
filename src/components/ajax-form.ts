@@ -4,6 +4,8 @@ import { BaseComponent } from "./base-component";
 import { DomManipulatorRules, DomManipulator } from "../dom-utilities";
 
 export class AjaxForm extends BaseComponent<AjaxFormConfig> {
+  isLoading: boolean = false;
+
   getContext(): AjaxFormContext {
     return {
       window,
@@ -35,6 +37,60 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
     //}).catch(err => {
     //  console.error('Failed to submit', err);
     //});
+  }
+
+  navigate(url: string, method: string = 'GET', data: any = {}, successCallback?: SuccessCallback, errorCallback?: ErrorCallback): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.isLoading) {
+        resolve();
+        return;
+      }
+      this.isLoading = true;
+
+      let ajaxSettings: JQueryAjaxSettings = {};
+
+      try {
+        const parsed = new URL(url, window.location.host);
+        parsed.host = window.location.host;
+
+        ajaxSettings = {
+          async: false,
+          dataType: 'html',
+          beforeSend: function(jqXHR, settings){ return; },
+          method: method,
+          complete: async () => {
+            this.isLoading = false;
+            resolve();
+          },
+          success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
+            console.log(response.toString());
+            if (successCallback) {
+              successCallback(response, status, xhr);
+            }
+          },
+          error: (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
+            console.log(status);
+            if (errorCallback) {
+              errorCallback(xhr, status, error);
+            }
+          }
+        };
+
+        if (method === 'GET') {
+          if (parsed.search) {
+            const overrides = Querystring.parse(parsed.search.substr(1));
+            Object.assign(data, overrides);
+          }
+          parsed.search = Querystring.stringify(data);
+        } else {
+          ajaxSettings.data = data;
+        }
+
+        ajaxSettings.url = parsed.href;
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   onSuccess(response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) {
@@ -81,4 +137,12 @@ export interface AjaxFormErrorContext extends AjaxFormContext {
   xhr: JQuery.jqXHR;
   status: JQuery.Ajax.ErrorTextStatus;
   error: string;
+}
+
+export interface SuccessCallback {
+  (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR): void;
+}
+
+export interface ErrorCallback {
+  (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string): void;
 }
