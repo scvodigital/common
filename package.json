@@ -2,12 +2,11 @@
   "name": "@scvo/common",
   "version": "0.0.1",
   "description": "Common JS components, CSS, and Templates used across our sites",
-  "main": "build/component-manager.js",
+  "main": "build/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf build/**",
-    "build": "npm run clean && tsc && npm run copy-styles",
-    "copy-styles": "cp src/*.scss build/ 2> /dev/null"
+    "build": "npm run clean && webpack"
   },
   "repository": {
     "type": "git",
