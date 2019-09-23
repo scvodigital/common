@@ -1,5 +1,5 @@
 import { BaseComponent } from "./base-component";
-import { DomManipulator, DomManipulatorRules } from '../dom-utilities';
+import { DomManipulator, DomManipulatorRules } from '../dom-manipulator';
 
 // tslint:disable-next-line: no-implicit-dependencies
 require('imports-loader?define=>false!typeahead.js/dist/typeahead.jquery.min.js');

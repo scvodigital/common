@@ -1,5 +1,6 @@
 import * as Crypto from 'crypto';
 
+const JSON6: any = require('json-6');
 import * as $ from 'jquery';
 import { ComponentManager } from '../component-manager';
 
@@ -14,7 +15,8 @@ export class BaseComponent<T> {
 
   constructor(element: Element|JQuery<HTMLElement>, public componentManager: ComponentManager) {
     this.element = $(element) as JQuery<HTMLElement>;
-    this.config = this.element.data(this.componentType.toLowerCase());
+    const unparsedConfig = this.element.attr('data-' + this.componentType.toLowerCase());
+    this.config = JSON6.parse(unparsedConfig);
     if (typeof this.config !== 'object') {
       console.error(this.componentType + ' => Invalid configuration JSON', this.config);
     }

@@ -49,6 +49,7 @@
   "dependencies": {
     "bristles": "0.0.7",
     "jquery": "^3.4.1",
+    "json-6": "^1.0.2",
     "leaflet": "^1.5.1",
     "leaflet.markercluster": "^1.4.1",
     "mapbox.js": "^3.2.0",

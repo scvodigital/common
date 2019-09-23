@@ -1,8 +1,11 @@
-import * as Querystring from 'querystring';
-
+import { DomReader, DomReaderRules } from './dom-reader';
 import { Bristles } from 'bristles';
 
 export function DomManipulator(rules: DomManipulatorRules, root: JQuery<HTMLElement>, data: any) {
+  if (rules.domReader) {
+    data.reader = DomReader(root, rules.domReader);
+  }
+
   if (rules.addClasses) {
     rulesIterator(rules.addClasses, root, data, (element, classes: string[]) => {
       for (let className of classes) {
@@ -127,79 +130,12 @@ function rulesIterator(items: any, root: JQuery<HTMLElement>, context: any, call
   }
 }
 
-const objectPathCache: { [path: string]: Function } = {};
-
-export function DomReader(rules: DomReaderRules, root: JQuery<HTMLElement>): any {
-  const output: any = {};
-
-  for (const [name, rule] of Object.entries(rules)) {
-    let value: undefined|any;
-    if (rule.selector === 'window') {
-      value = objectPath(window, rule.attribute)
-    } else {
-      const elements =
-        rule.selector === '>' ? root :
-        rule.selector.startsWith('>') ? root.find(rule.selector.substr(1)) :
-        rule.selector === '<' ? root.parent() :
-        rule.selector.startsWith('<') ? root.parents(rule.selector.substr(1)) :
-        $(rule.selector);
-
-      if (elements.length === 0) continue;
-
-      switch (rule.attribute) {
-        case ('$serializedObject'):
-          value = Querystring.parse(elements.serialize());
-          break;
-        case ('$serializedQuerystring'):
-          value = elements.serialize();
-          break;
-        case ('$html'):
-          value = elements.html();
-          break;
-        case ('$text'):
-          value = elements.text();
-          break;
-        default:
-          value = elements.attr(rule.attribute);
-      }
-    }
-
-    if (typeof value !== 'undefined') {
-      if (Array.isArray(value) && !rule.array) {
-        output[name] = value[0];
-      } else {
-        output[name] = value;
-      }
-    } else if (rule.default) {
-      output[name] = rule.default;
-    }
-  }
-
-  return output;
-
-  function objectPath(obj: any, path: string) {
-    if (!objectPathCache.hasOwnProperty(path)) {
-      objectPathCache[path] = new Function("obj", "return obj." + path + ";");
-    }
-    const resolved = objectPathCache[path](obj);
-    return resolved;
-  }
-}
-
-export interface DomReaderRules {
-  [name: string]: {
-    selector: string;
-    attribute: string;
-    default?: string;
-    array?: boolean;
-  }
-}
-
 export interface DomManipulatorRulesCallback {
   (element: JQuery<HTMLElement>, data?: any): void;
 }
 
 export interface DomManipulatorRules {
+  domReader?: DomReaderRules;
   addClasses?: RulesMap<string[]>;
   removeClasses?: RulesMap<string[]>;
   attributes?: RulesMap<RulesMap<string>>;
