@@ -52,7 +52,7 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
         complete: async () => {
           this.isLoading = false;
           if (this.config.onCompleteRules) {
-            DomManipulator(this.config.onSuccessRules, this.element, this.getContext());
+            DomManipulator(this.config.onCompleteRules, this.element, this.getContext());
           }
         },
         success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
