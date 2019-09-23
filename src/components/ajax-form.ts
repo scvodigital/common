@@ -20,7 +20,6 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
   }
 
   submit(event: JQuery.SubmitEvent) {
-    alert('Woop');
     event.preventDefault();
 
     if (this.isLoading) {
@@ -52,17 +51,17 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
         method: method,
         complete: async () => {
           this.isLoading = false;
+          if (this.config.onCompleteRules) {
+            DomManipulator(this.config.onSuccessRules, this.element, this.getContext());
+          }
         },
         success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
-          console.log('AJAX Form => success', response.toString());
           if (this.config.onSuccessRules) {
             const context: AjaxFormSuccessContext = Object.assign(this.getContext(), { xhr, status, response });
-            console.log('Success rules', this.config.onSuccessRules, context);
             DomManipulator(this.config.onSuccessRules, this.element, context);
           }
         },
         error: (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
-          console.log('AJAX Form => error', status, error);
           if (onError) {
             const context: AjaxFormErrorContext = Object.assign(this.getContext(), { xhr, status, error });
             onError(context);
@@ -84,7 +83,6 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
 
       $.ajax(ajaxSettings);
     } catch (err) {
-      console.log('AJAX Form => exception', err);
       this.isLoading = false;
       if (onError) {
         onError({
@@ -120,6 +118,7 @@ export interface AjaxFormConfig {
   onSubmitRules: DomManipulatorRules;
   onSuccessRules: DomManipulatorRules;
   onErrorRules: DomManipulatorRules;
+  onCompleteRules: DomManipulatorRules;
 }
 
 export interface AjaxFormContext {
