@@ -20,7 +20,13 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
   }
 
   submit(event: JQuery.SubmitEvent) {
+    alert('Woop');
     event.preventDefault();
+
+    if (this.isLoading) {
+      return;
+    }
+    this.isLoading = true;
 
     const url = this.element.attr('action') || '/';
     const method = this.element.attr('method') || 'GET';
@@ -30,69 +36,63 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
       DomManipulator(this.config.onSubmitRules, this.element, this.getContext());
     }
 
-    console.log(url, method, data);
+    const onError = this.config.onErrorRules ? (context: any) => {
+      DomManipulator(this.config.onErrorRules, this.element, context);
+    } : null;
 
-    this.navigate(url, method, data, this.onSuccess.bind(this), this.onError.bind(this)).then(() => {
-      console.log('Submitting', url, method, data);
-    }).catch(err => {
-      console.error('Failed to submit', err);
-    });
-  }
+    let ajaxSettings: JQueryAjaxSettings = {};
 
-  navigate(url: string, method: string = 'GET', data: any = {}, successCallback?: SuccessCallback, errorCallback?: ErrorCallback): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      if (this.isLoading) {
-        resolve();
-        return;
-      }
-      this.isLoading = true;
+    try {
+      const parsed = url.match(/^https?:/) ? new URL(url) : new URL(url, window.location.origin);
 
-      let ajaxSettings: JQueryAjaxSettings = {};
-
-      try {
-        const parsed = url.match(/^https?:/) ? new URL(url) : new URL(url, window.location.origin);
-
-        ajaxSettings = {
-          async: false,
-          dataType: 'html',
-          beforeSend: function(jqXHR, settings){ return; },
-          method: method,
-          complete: async () => {
-            this.isLoading = false;
-            resolve();
-          },
-          success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
-            console.log(response.toString());
-            if (successCallback) {
-              successCallback(response, status, xhr);
-            }
-          },
-          error: (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
-            console.log(status);
-            if (errorCallback) {
-              errorCallback(xhr, status, error);
-            }
+      ajaxSettings = {
+        async: true,
+        dataType: 'html',
+        beforeSend: function(jqXHR, settings){ return; },
+        method: method,
+        complete: async () => {
+          this.isLoading = false;
+        },
+        success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
+          console.log('AJAX Form => success', response.toString());
+          if (this.config.onSuccessRules) {
+            const context: AjaxFormSuccessContext = Object.assign(this.getContext(), { xhr, status, response });
+            console.log('Success rules', this.config.onSuccessRules, context);
+            DomManipulator(this.config.onSuccessRules, this.element, context);
           }
-        };
-
-        if (method === 'GET') {
-          if (parsed.search) {
-            const overrides = Querystring.parse(parsed.search.substr(1));
-            Object.assign(data, overrides);
+        },
+        error: (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
+          console.log('AJAX Form => error', status, error);
+          if (onError) {
+            const context: AjaxFormErrorContext = Object.assign(this.getContext(), { xhr, status, error });
+            onError(context);
           }
-          parsed.search = Querystring.stringify(data);
-        } else {
-          ajaxSettings.data = data;
         }
+      };
 
-        ajaxSettings.url = parsed.href;
-
-        $.ajax(ajaxSettings);
-      } catch (err) {
-        this.isLoading = false;
-        reject(err);
+      if (method === 'GET') {
+        if (parsed.search) {
+          const overrides = Querystring.parse(parsed.search.substr(1));
+          Object.assign(data, overrides);
+        }
+        parsed.search = Querystring.stringify(data);
+      } else {
+        ajaxSettings.data = data;
       }
-    });
+
+      ajaxSettings.url = parsed.href;
+
+      $.ajax(ajaxSettings);
+    } catch (err) {
+      console.log('AJAX Form => exception', err);
+      this.isLoading = false;
+      if (onError) {
+        onError({
+          status: 'None AJAX error',
+          error: err
+        });
+      }
+    }
   }
 
   onSuccess(response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) {
