@@ -56,7 +56,7 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
               feature = new L.Polygon((featureConfig as LeafletPolygon).latLngs, featureConfig.options);
               break;
             case ('Marker'):
-              if ((featureConfig as any).options.icon) {
+              if ((featureConfig as any).options && (featureConfig as any).options.icon) {
                 (featureConfig as any).options.icon = L.icon((featureConfig as any).options.icon);
               }
               feature = new L.Marker((featureConfig as LeafletMarker).latLng, featureConfig.options);
