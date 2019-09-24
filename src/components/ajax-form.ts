@@ -21,7 +21,10 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
 
   submit(event: JQuery.SubmitEvent) {
     event.preventDefault();
+    this.doSubmit().then().catch();
+  }
 
+  async doSubmit() {
     if (this.isLoading) {
       return;
     }
@@ -32,12 +35,8 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
     const data = Querystring.parse(this.element.serialize());
 
     if (this.config.onSubmitRules) {
-      DomManipulator(this.config.onSubmitRules, this.element, this.getContext());
+      await DomManipulator(this.config.onSubmitRules, this.element, this.getContext());
     }
-
-    const onError = this.config.onErrorRules ? (context: any) => {
-      DomManipulator(this.config.onErrorRules, this.element, context);
-    } : null;
 
     let ajaxSettings: JQueryAjaxSettings = {};
 
@@ -52,20 +51,17 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
         complete: async () => {
           this.isLoading = false;
           if (this.config.onCompleteRules) {
-            DomManipulator(this.config.onCompleteRules, this.element, this.getContext());
+            await DomManipulator(this.config.onCompleteRules, this.element, this.getContext());
           }
         },
-        success: (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
+        success: async (response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) => {
           if (this.config.onSuccessRules) {
             const context: AjaxFormSuccessContext = Object.assign(this.getContext(), { xhr, status, response });
-            DomManipulator(this.config.onSuccessRules, this.element, context);
+            await DomManipulator(this.config.onSuccessRules, this.element, context);
           }
         },
-        error: (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
-          if (onError) {
-            const context: AjaxFormErrorContext = Object.assign(this.getContext(), { xhr, status, error });
-            onError(context);
-          }
+        error: async (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
+          await this.onError(xhr, status, error);
         }
       };
 
@@ -84,32 +80,27 @@ export class AjaxForm extends BaseComponent<AjaxFormConfig> {
       $.ajax(ajaxSettings);
     } catch (err) {
       this.isLoading = false;
-      if (onError) {
-        onError({
-          status: 'None AJAX error',
-          error: err
-        });
-      }
+      await this.onError(null, 'abort', err);
     }
   }
 
-  onSuccess(response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) {
+  async onSuccess(response: any, status: JQuery.Ajax.SuccessTextStatus, xhr: JQuery.jqXHR) {
     if (this.config.onSuccessRules) {
       const context = this.getContext() as AjaxFormSuccessContext;
       context.xhr = xhr;
       context.response = response;
       context.status = status;
-      DomManipulator(this.config.onSuccessRules, this.element, context);
+      await DomManipulator(this.config.onSuccessRules, this.element, context);
     }
   }
 
-  onError(xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) {
+  async onError(xhr: JQuery.jqXHR|null, status: JQuery.Ajax.ErrorTextStatus, error: string) {
     if (this.config.onErrorRules) {
       const context = this.getContext() as AjaxFormErrorContext;
       context.xhr = xhr;
       context.status = status;
       context.error = error;
-      DomManipulator(this.config.onSuccessRules, this.element, context);
+      await DomManipulator(this.config.onSuccessRules, this.element, context);
     }
   }
 }
@@ -135,7 +126,7 @@ export interface AjaxFormSuccessContext extends AjaxFormContext {
 }
 
 export interface AjaxFormErrorContext extends AjaxFormContext {
-  xhr: JQuery.jqXHR;
+  xhr: JQuery.jqXHR|null;
   status: JQuery.Ajax.ErrorTextStatus;
   error: string;
 }

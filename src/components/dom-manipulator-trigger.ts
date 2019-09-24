@@ -24,7 +24,11 @@ export class DomManipulatorTrigger extends BaseComponent<DomManipulatorTriggerCo
     };
     const rules = this.config[event.type];
     const target = $(event.currentTarget as HTMLElement || this.element);
-    DomManipulator(rules, target, context);
+    DomManipulator(rules, target, context)
+      .then()
+      .catch(err => {
+        console.error('DOM Manipulator Failed', err);
+      });
   }
 }
 

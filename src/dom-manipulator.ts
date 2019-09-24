@@ -1,7 +1,7 @@
 import { DomReader, DomReaderRules } from './dom-reader';
 import { Bristles } from 'bristles';
 
-export function DomManipulator(rules: DomManipulatorRules, root: JQuery<HTMLElement>, data: any) {
+export async function DomManipulator(rules: DomManipulatorRules, root: JQuery<HTMLElement>, data: any) {
   if (rules.domReader) {
     data.reader = DomReader(root, rules.domReader);
   }
@@ -86,8 +86,8 @@ export function DomManipulator(rules: DomManipulatorRules, root: JQuery<HTMLElem
   if (rules.delayed) {
     for (const delayedRules of rules.delayed) {
       const delay = Number(delayedRules.delay) || 0;
-      setTimeout(() => {
-        DomManipulator(delayedRules.rules, root, data);
+      setTimeout(async () => {
+        await DomManipulator(delayedRules.rules, root, data);
       }, delay);
     }
   }

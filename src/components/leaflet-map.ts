@@ -6,6 +6,7 @@ import 'mapbox.js';
 
 import { BaseComponent } from "./base-component";
 import { ComponentManager } from '../component-manager';
+import { DomManipulatorRules, DomManipulator } from '../dom-manipulator';
 
 const L = (window as any).L as typeof Leaflet;
 
@@ -67,6 +68,21 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
             if (featureConfig.popupContent) {
               feature.bindPopup(featureConfig.popupContent);
             }
+
+            if (featureConfig.events) {
+              for (const [eventName, rules] of Object.entries(featureConfig.events)) {
+                feature.on(eventName, async (event) => {
+                  const context = {
+                    event,
+                    feature,
+                    featureConfig,
+                    featureGroupConfig
+                  };
+                  await DomManipulator(rules, this.element, context);
+                });
+              }
+            }
+
             featureGroup.addLayer(feature);
           }
         }
@@ -80,6 +96,19 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
             bounds.extend(groupBounds);
           }
         }
+
+        if (featureGroupConfig.events) {
+          for (const [eventName, rules] of Object.entries(featureGroupConfig.events)) {
+            featureGroup.on(eventName, async (event) => {
+              const context = {
+                event,
+                featureGroup,
+                featureGroupConfig
+              };
+              await DomManipulator(rules, this.element, context);
+            });
+          }
+        }
       }
     }
 
@@ -89,9 +118,25 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
 
         for (const markerConfig of markerClusterGroupConfig.markers) {
           const marker = L.marker(markerConfig.latLng, markerConfig.options);
+
           if (markerConfig.popupContent) {
             marker.bindPopup(markerConfig.popupContent);
           }
+
+          if (markerConfig.events) {
+            for (const [eventName, rules] of Object.entries(markerConfig.events)) {
+              marker.on(eventName, async (event) => {
+                const context = {
+                  event,
+                  feature: marker,
+                  featureConfig: markerConfig,
+                  featureGroupConfig: markerClusterGroupConfig
+                };
+                await DomManipulator(rules, this.element, context);
+              });
+            }
+          }
+
           markerClusterGroup.addLayer(marker);
         }
 
@@ -103,6 +148,19 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
             bounds = groupBounds;
           } else {
             bounds.extend(groupBounds);
+          }
+        }
+
+        if (markerClusterGroupConfig.events) {
+          for (const [eventName, rules] of Object.entries(markerClusterGroupConfig.events)) {
+            markerClusterGroup.on(eventName, async (event) => {
+              const context = {
+                event,
+                featureGroup: markerClusterGroup,
+                featureGroupConfig: markerClusterGroupConfig
+              };
+              await DomManipulator(rules, this.element, context);
+            });
           }
         }
       }
@@ -126,18 +184,21 @@ export interface LeafletFeatureGroup {
   features: LeafletFeature<L.InteractiveLayerOptions>[];
   options?: L.LayerOptions;
   boundToThis?: boolean;
+  events?: { [event: string]: DomManipulatorRules };
 }
 
 export interface LeafletMarkerClusterGroup {
   markers: LeafletMarker[];
   options?: L.MarkerClusterGroupOptions;
   boundToThis?: boolean;
+  events?: { [event: string]: DomManipulatorRules };
 }
 
 export interface LeafletFeature<T extends L.InteractiveLayerOptions> {
   type: 'Rectangle' | 'Circle' | 'Polygon' | 'Marker';
   popupContent?: string;
   options?: T;
+  events?: { [event: string]: DomManipulatorRules };
   [key: string]: any;
 }
 
