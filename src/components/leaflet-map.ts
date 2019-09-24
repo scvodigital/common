@@ -36,6 +36,19 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
       opacity: 0.9
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
+
+    if (this.config.events) {
+      for (const [eventName, rules] of Object.entries(this.config.events)) {
+        this.map.on(eventName, async (event) => {
+          const context = {
+            event,
+            map: this.map,
+            config: this.config
+          };
+          await DomManipulator(rules, this.element, context);
+        });
+      }
+    }
   }
 
   async init() {
@@ -76,6 +89,7 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
                     event,
                     feature,
                     featureConfig,
+                    featureGroup,
                     featureGroupConfig
                   };
                   await DomManipulator(rules, this.element, context);
@@ -130,6 +144,7 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
                   event,
                   feature: marker,
                   featureConfig: markerConfig,
+                  featureGroup: markerClusterGroup,
                   featureGroupConfig: markerClusterGroupConfig
                 };
                 await DomManipulator(rules, this.element, context);
@@ -178,6 +193,7 @@ export interface LeafletConfig {
   initialZoom: number;
   featureGroups?: LeafletFeatureGroup[];
   markerClusterGroups?: LeafletMarkerClusterGroup[];
+  events?: { [event: string]: DomManipulatorRules };
 }
 
 export interface LeafletFeatureGroup {
