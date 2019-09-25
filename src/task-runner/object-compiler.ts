@@ -5,7 +5,7 @@ export class ObjectCompiler {
   static renderer = new Renderer();
 
   static isTemplate(property: any): boolean {
-    return typeof property === 'object' && property.hasOwnProperty('__template');
+    return typeof property === 'object' && property !== null && property.hasOwnProperty('__template');
   }
 
   static async compile(config: any, context: TaskRunnerContext, specialProperties?: string[]): Promise<any> {
