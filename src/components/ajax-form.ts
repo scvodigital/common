@@ -8,6 +8,29 @@ const JsonLogic: any = require('json-logic-js');
 export class AjaxForm extends BaseComponent<AjaxFormConfig> {
   isLoading: boolean = false;
 
+  get validationErrors(): ValidationError[] {
+    console.log('Invalid Elements Before Check', this.element.find(':invalid'));
+
+    (this.element as JQuery<HTMLFormElement>)[0].checkValidity()
+
+    console.log('Invalid Elements After Check', this.element.find(':invalid'));
+
+    const validationErrors: ValidationError[] = [];
+    const invalidElements = this.element.find(':invalid');
+
+    invalidElements.each((index, node) => {
+      const $label = $(`label[for="${node.id}"]`);
+      const error: ValidationError = {
+        label: $label.html() || $(node).attr('name') || node.id || 'Unlabelled field',
+        message: (node as any).validationMessage || 'Invalid value',
+        element: $(node)
+      };
+      validationErrors.push(error);
+    });
+
+    return validationErrors;
+  }
+
   get getContext(): AjaxFormContext {
     return {
       window,
@@ -164,4 +187,10 @@ export interface ValidationOutcome {
   isValid: boolean;
   rules: DomManipulatorRules;
   data: any;
+}
+
+export interface ValidationError {
+  message: string;
+  label: string;
+  element: JQuery<HTMLElement>;
 }

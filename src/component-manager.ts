@@ -6,6 +6,7 @@ import { LeafletMap } from './components/leaflet-map';
 import { MultiSelect } from './components/multi-select';
 import { RemoteContent } from './components/remote-content';
 import { Typeahead } from './components/typeahead';
+import { TasksTrigger } from './components/tasks-trigger';
 
 require('material-design-lite');
 require('./components.scss');
@@ -17,7 +18,8 @@ export class ComponentManager {
     LeafletMap,
     MultiSelect,
     RemoteContent,
-    Typeahead
+    Typeahead,
+    TasksTrigger
   };
   componentRegistry: ComponentRegistry = {};
   clock = window.requestAnimationFrame(this.tick.bind(this));
