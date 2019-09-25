@@ -36,7 +36,7 @@ export class TaskRunner {
     console.log('About to run the following tasks', tasks);
     for (const task of tasks) {
       const taskModule = TaskRunner.taskModules.hasOwnProperty(task.type) ? TaskRunner.taskModules[task.type] : TaskRunner.taskModules.basic;
-      const taskName = taskModule.moduleType + '-' + Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000;
+      const taskName = task.name || taskModule.moduleType + '-' + Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000;
 
       console.log('Running task', taskName, task);
 
