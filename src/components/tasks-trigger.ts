@@ -22,14 +22,32 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       $,
       instance: this,
     });
-    const tasks = this.config[event.type];
+    const eventConfig = this.config[event.type];
+
+    if (eventConfig.preventDefault) {
+      event.preventDefault();
+    }
+
+    if (eventConfig.stopPropagation) {
+      event.stopPropagation();
+    }
+
+    if (eventConfig.stopImmediatePropagation) {
+      event.stopImmediatePropagation();
+    }
+
     const target = $(event.currentTarget as HTMLElement || this.element);
-    TaskRunner.run(tasks, context, target).then().catch(err => {
+    TaskRunner.run(eventConfig.tasks, context, target).then().catch(err => {
       console.error('TasksTrigger Failed', err);
     });
   }
 }
 
 export interface TasksTriggerConfig {
-  [event: string]: TaskConfig[];
+  [event: string]: {
+    tasks: TaskConfig[];
+    preventDefault?: boolean;
+    stopPropagation?: boolean;
+    stopImmediatePropagation?: boolean;
+  }
 }

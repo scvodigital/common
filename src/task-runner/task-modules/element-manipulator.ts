@@ -43,6 +43,22 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
         }
       }
 
+      if (typeof rules.styles === 'object') {
+        for (const [property, value] of Object.entries(rules.styles)) {
+          if (value === null) {
+            elements.css(property, 'initial');
+          } else {
+            elements.css(property, value);
+          }
+        }
+      }
+
+      if (typeof rules.data === 'object') {
+        for (const [key, value] of Object.entries(rules.data)) {
+          elements.data(key, value);
+        }
+      }
+
       if (typeof rules.contents === 'string') {
         elements.html(rules.contents);
       }
@@ -77,9 +93,15 @@ export interface ElementManipulatorConfig {
     addClass?: string | string[];
     removeClass?: string | string[];
     toggleClass?: string | string[];
-    attributes?: {
-      [attribute: string]: any
+    styles?: {
+      [property: string]: string;
     };
+    attributes?: {
+      [attribute: string]: string;
+    };
+    data?: {
+      [key: string]: any;
+    }
     contents?: string;
     createElement?: CreateElementConfig | CreateElementConfig[];
   };
