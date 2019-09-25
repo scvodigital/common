@@ -10,6 +10,7 @@ export class Request extends Basic<JQueryAjaxSettings> {
       config.error = (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
         reject(new Error(`Reason: ${status}. Message: ${error}`));
       };
+      $.ajax(config);
     });
   }
 }
