@@ -44,7 +44,7 @@ export class ObjectCompiler {
       return compiled;
     }
 
-    if (typeof resolvedProperty === 'object') {
+    if (typeof resolvedProperty === 'object' && resolvedProperty !== null) {
       const output: any = {};
       for (const [key, value] of Object.entries(resolvedProperty)) {
         output[key] = await ObjectCompiler.compileProperty(value, context);
