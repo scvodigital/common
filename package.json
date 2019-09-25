@@ -47,7 +47,7 @@
     "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
-    "bristles": "0.0.7",
+    "bristles": "0.0.13",
     "jquery": "^3.4.1",
     "json-6": "^1.0.2",
     "json-logic-js": "^1.2.2",
