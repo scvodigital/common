@@ -17,7 +17,7 @@ import { JsonLogic } from './task-modules/json-logic';
 
 export class TaskRunnerContext {
   errors: { [taskName: string]: Error } = {};
-  constructor (public metaData: any = {}, public data: any = {}) { }
+  constructor (public metaData: any = {}, public data: any = {}, public root: JQuery<any> = $(document)) { };
 }
 
 export class TaskRunner {

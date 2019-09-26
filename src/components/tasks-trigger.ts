@@ -21,7 +21,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       window,
       $,
       instance: this,
-    });
+    }, {}, this.element);
     const eventConfig = this.config[event.type];
 
     if (eventConfig.preventDefault) {

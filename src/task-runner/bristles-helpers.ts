@@ -1,13 +1,10 @@
 export class BristlesHelpers {
   static _jquery(selector: string, method: string, args: string[], property: string): any {
     try {
-      if (typeof selector !== 'string') {
-        throw Error('No selector specified');
-      }
-
       const helper: HelperOptions = arguments[arguments.length - 1];
       const context = $(helper.hash.context || document);
-      const element = context.find(selector) as any;
+
+      const element = typeof selector !== 'string' ? context : context.find(selector) as any;
 
       if (typeof method !== 'string') {
         return element;
