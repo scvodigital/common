@@ -11,6 +11,7 @@ import { JsonLogic } from './task-modules/json-logic';
 /**
  * TODO: Create the following tasks
  *  - Evaluate
+ *  - Switch
  */
 
 

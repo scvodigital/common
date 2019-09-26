@@ -1,5 +1,6 @@
 import { ParserConfig, Parser } from './parsers/parser';
 import { TaskRunnerContext } from './task-runner';
+import { BristlesHelpers } from './bristles-helpers';
 
 import { BooleanParser } from './parsers/boolean-parser';
 import { FloatParser } from './parsers/float-parser';
@@ -7,6 +8,7 @@ import { IntegerParser } from './parsers/integer-parser';
 import { JsonParser } from './parsers/json-parser';
 import { StringParser } from './parsers/string-parser';
 import { UrlParser } from './parsers/url-parser';
+import { QuerystringParser } from './parsers/querystring-parser';
 
 import { Bristles } from 'bristles';
 
@@ -18,8 +20,28 @@ export class Renderer {
     json: new JsonParser(),
     string: new StringParser(),
     url: new UrlParser(),
+    querystring: new QuerystringParser(),
     basic: new Parser()
   };
+
+  constructor() {
+    this.registerHelpers();
+  }
+
+  registerHelpers() {
+    try {
+      const propertyNames = Object.getOwnPropertyNames(BristlesHelpers);
+      for (const prop of propertyNames) {
+        if (prop.startsWith('_') && typeof (BristlesHelpers as any)[prop] === 'function') {
+          const name = prop.substr(1);
+          Bristles.registerHelper(name, (BristlesHelpers as any)[prop]);
+          Bristles.registerHelper(prop, () => { return (BristlesHelpers as any)[prop]; });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to register Bristles Helpers', err);
+    }
+  }
 
   async render(config: RenderConfig, context: TaskRunnerContext): Promise<any> {
     const template = await this.getTemplate(config, context);
