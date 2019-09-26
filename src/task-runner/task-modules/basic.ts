@@ -33,8 +33,6 @@ export class Basic<T> {
         currentElement = currentElement.find(selector.substr(1));
       } else if (selector.startsWith('<')) {
         currentElement = currentElement.parents(selector.substr(1));
-      } else if (selector.startsWith('$$')) {
-        currentElement = currentElement.siblings(selector.substr(2)).addBack();
       } else if (selector.startsWith('$')) {
         currentElement = currentElement.siblings(selector.substr(1));
       } else {
