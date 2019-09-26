@@ -17,7 +17,7 @@ export class Basic<T> {
   }
 
   selectorResolver(rootElement: JQuery<any>, rules: string) {
-    const selectors = rules.split(/\s*|\s*/g);
+    const selectors = rules.split(/\s*\|\s*/g);
     let currentElement = rootElement;
     for (const selector of selectors) {
       if (selector === '' || selector === '>') {
