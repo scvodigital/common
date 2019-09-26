@@ -17,10 +17,10 @@ export class Basic<T> {
   }
 
   selectorResolver(rootElement: JQuery<any>, rules: string) {
-    const selectors = rules.split(/\s*\|\s*/g);
+    const selectors = rules.split(/\|/g);
     let currentElement = rootElement;
     for (let selector of selectors) {
-      selector = selector.replace(/(?:{)([\w-]+)(?:})/g, (_match: string, attribute: string) => {
+      selector = selector.trim().replace(/(?:{)([\w-]+)(?:})/g, (_match: string, attribute: string) => {
         const value = currentElement.attr(attribute);
         return value || '';
       });
