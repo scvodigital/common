@@ -15,4 +15,27 @@ export class Basic<T> {
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: T): Promise<any> {
     return config;
   }
+
+  selectorResolver(rootElement: JQuery<any>, rules: string) {
+    const selectors = rules.split(/\s*|\s*/g);
+    let currentElement = rootElement;
+    for (const selector in selectors) {
+      if (selector === '' || selector === '>') {
+        continue;
+      } else if (selector === '<') {
+        currentElement = currentElement.parent();
+      } else if (selector.startsWith('>')) {
+        currentElement = currentElement.find(selector.substr(1));
+      } else if (selector.startsWith('<')) {
+        currentElement = currentElement.parents(selector.substr(1));
+      } else if (selector.startsWith('$$')) {
+        currentElement = currentElement.siblings(selector.substr(2)).addBack();
+      } else if (selector.startsWith('$')) {
+        currentElement = currentElement.siblings(selector.substr(1));
+      } else {
+        currentElement = $(selector);
+      }
+    }
+    return currentElement;
+  }
 }

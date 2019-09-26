@@ -34,12 +34,7 @@ export class Call extends Basic<CallConfig> {
       target = ObjectCompiler.objectPath(targetContext, query);
     } else if (targetConfig.type === 'JQuery' || targetConfig.type === 'HTMLElement') {
       query = targetConfig.selector;
-      const elements =
-        query === '>' ? context.rootElement :
-        query.startsWith('>') ? context.rootElement.find(query.substr(1)) :
-        query === '<' ? context.rootElement.parent() :
-        query.startsWith('<') ? context.rootElement.parents(query.substr(1)) :
-        $(query);
+      const elements = this.selectorResolver(context.rootElement, query);
 
       if (elements.length > 0) {
         target = targetConfig.type === 'JQuery' ? elements : elements[0];

@@ -4,12 +4,7 @@ import { TaskRunnerContext, TaskConfig } from '../task-runner';
 export class ElementManipulator extends Basic<ElementManipulatorConfig> {
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: ElementManipulatorConfig): Promise<any> {
     for (const [selector, rules] of Object.entries(config)) {
-      const elements =
-        selector === '>' ? context.rootElement :
-        selector.startsWith('>') ? context.rootElement.find(selector.substr(1)) :
-        selector === '<' ? context.rootElement.parent() :
-        selector.startsWith('<') ? context.rootElement.parents(selector.substr(1)) :
-        $(selector);
+      const elements = this.selectorResolver(context.rootElement, selector);
 
       if (rules.addClass) {
         elements.addClass(rules.addClass);
