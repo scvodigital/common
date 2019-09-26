@@ -19,7 +19,12 @@ export class Basic<T> {
   selectorResolver(rootElement: JQuery<any>, rules: string) {
     const selectors = rules.split(/\s*\|\s*/g);
     let currentElement = rootElement;
-    for (const selector of selectors) {
+    for (let selector of selectors) {
+      selector.replace(/(?:{)([\w-]+)(?:})/g, function(match) {
+        console.log('Regex Replace:', arguments);
+        return match;
+      });
+
       if (selector === '' || selector === '>') {
         continue;
       } else if (selector === '<') {
