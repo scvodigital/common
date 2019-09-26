@@ -20,9 +20,9 @@ export class Basic<T> {
     const selectors = rules.split(/\s*\|\s*/g);
     let currentElement = rootElement;
     for (let selector of selectors) {
-      selector.replace(/(?:{)([\w-]+)(?:})/g, function(match) {
-        console.log('Regex Replace:', arguments);
-        return match;
+      selector = selector.replace(/(?:{)([\w-]+)(?:})/g, (_match: string, attribute: string) => {
+        const value = currentElement.attr(attribute);
+        return value || '';
       });
 
       if (selector === '' || selector === '>') {
