@@ -6,7 +6,7 @@ import 'mapbox.js';
 
 import { BaseComponent } from "./base-component";
 import { ComponentManager } from '../component-manager';
-import { DomManipulatorRules, DomManipulator } from '../dom-manipulator';
+import { TaskRunnerContext, TaskRunner, TaskConfig } from '../task-runner/task-runner';
 
 const L = (window as any).L as typeof Leaflet;
 
@@ -40,12 +40,15 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
     if (this.config.events) {
       for (const [eventName, rules] of Object.entries(this.config.events)) {
         this.map.on(eventName, async (event) => {
-          const context = {
-            event,
-            map: this.map,
-            config: this.config
-          };
-          await DomManipulator(rules, this.element, context);
+          const context = new TaskRunnerContext({
+            metadata: {
+              event,
+              map: this.map,
+              config: this.config
+            },
+            rootElement: this.element
+          });
+          await TaskRunner.run(rules, context);
         });
       }
     }
@@ -85,14 +88,19 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
             if (featureConfig.events) {
               for (const [eventName, rules] of Object.entries(featureConfig.events)) {
                 feature.on(eventName, async (event) => {
-                  const context = {
-                    event,
-                    feature,
-                    featureConfig,
-                    featureGroup,
-                    featureGroupConfig
-                  };
-                  await DomManipulator(rules, this.element, context);
+                  const context = new TaskRunnerContext({
+                    metadata: {
+                      event,
+                      feature,
+                      featureConfig,
+                      featureGroup,
+                      featureGroupConfig,
+                      map: this.map,
+                      config: this.config
+                    },
+                    rootElement: this.element
+                  });
+                  await TaskRunner.run(rules, context);
                 });
               }
             }
@@ -114,12 +122,17 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
         if (featureGroupConfig.events) {
           for (const [eventName, rules] of Object.entries(featureGroupConfig.events)) {
             featureGroup.on(eventName, async (event) => {
-              const context = {
-                event,
-                featureGroup,
-                featureGroupConfig
-              };
-              await DomManipulator(rules, this.element, context);
+              const context = new TaskRunnerContext({
+                metadata: {
+                  event,
+                  featureGroup,
+                  featureGroupConfig,
+                  map: this.map,
+                  config: this.config
+                },
+                rootElement: this.element
+              });
+              await TaskRunner.run(rules, context);
             });
           }
         }
@@ -140,14 +153,19 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
           if (markerConfig.events) {
             for (const [eventName, rules] of Object.entries(markerConfig.events)) {
               marker.on(eventName, async (event) => {
-                const context = {
-                  event,
-                  feature: marker,
-                  featureConfig: markerConfig,
-                  featureGroup: markerClusterGroup,
-                  featureGroupConfig: markerClusterGroupConfig
-                };
-                await DomManipulator(rules, this.element, context);
+                const context = new TaskRunnerContext({
+                  metadata: {
+                    event,
+                    feature: marker,
+                    featureConfig: markerConfig,
+                    featureGroup: markerClusterGroup,
+                    featureGroupConfig: markerClusterGroupConfig,
+                    map: this.map,
+                    config: this.config
+                  },
+                  rootElement: this.element
+                });
+                await TaskRunner.run(rules, context);
               });
             }
           }
@@ -169,12 +187,17 @@ export class LeafletMap extends BaseComponent<LeafletConfig> {
         if (markerClusterGroupConfig.events) {
           for (const [eventName, rules] of Object.entries(markerClusterGroupConfig.events)) {
             markerClusterGroup.on(eventName, async (event) => {
-              const context = {
-                event,
-                featureGroup: markerClusterGroup,
-                featureGroupConfig: markerClusterGroupConfig
-              };
-              await DomManipulator(rules, this.element, context);
+              const context = new TaskRunnerContext({
+                metadata: {
+                  event,
+                  featureGroup: markerClusterGroup,
+                  featureGroupConfig: markerClusterGroupConfig,
+                  map: this.map,
+                  config: this.config
+                },
+                rootElement: this.element
+              });
+              await TaskRunner.run(rules, context);
             });
           }
         }
@@ -193,28 +216,28 @@ export interface LeafletConfig {
   initialZoom: number;
   featureGroups?: LeafletFeatureGroup[];
   markerClusterGroups?: LeafletMarkerClusterGroup[];
-  events?: { [event: string]: DomManipulatorRules };
+  events?: { [event: string]: TaskConfig[] };
 }
 
 export interface LeafletFeatureGroup {
   features: LeafletFeature<L.InteractiveLayerOptions>[];
   options?: L.LayerOptions;
   boundToThis?: boolean;
-  events?: { [event: string]: DomManipulatorRules };
+  events?: { [event: string]: TaskConfig[] };
 }
 
 export interface LeafletMarkerClusterGroup {
   markers: LeafletMarker[];
   options?: L.MarkerClusterGroupOptions;
   boundToThis?: boolean;
-  events?: { [event: string]: DomManipulatorRules };
+  events?: { [event: string]: TaskConfig[] };
 }
 
 export interface LeafletFeature<T extends L.InteractiveLayerOptions> {
   type: 'Rectangle' | 'Circle' | 'Polygon' | 'Marker';
   popupContent?: string;
   options?: T;
-  events?: { [event: string]: DomManipulatorRules };
+  events?: { [event: string]: TaskConfig[] };
   [key: string]: any;
 }
 

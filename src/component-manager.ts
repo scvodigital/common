@@ -1,23 +1,14 @@
 import { BaseComponent } from './components/base-component';
 
-import { AjaxForm } from './components/ajax-form';
-import { DomManipulatorTrigger } from './components/dom-manipulator-trigger';
 import { LeafletMap } from './components/leaflet-map';
-import { MultiSelect } from './components/multi-select';
-import { RemoteContent } from './components/remote-content';
 import { Typeahead } from './components/typeahead';
 import { TasksTrigger } from './components/tasks-trigger';
 
-require('material-design-lite');
 require('./components.scss');
 
 export class ComponentManager {
   components: { [name: string]: any } = {
-    AjaxForm,
-    DomManipulatorTrigger,
     LeafletMap,
-    MultiSelect,
-    RemoteContent,
     Typeahead,
     TasksTrigger
   };

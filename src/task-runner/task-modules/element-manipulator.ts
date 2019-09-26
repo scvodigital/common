@@ -2,24 +2,14 @@ import { Basic } from './basic';
 import { TaskRunnerContext, TaskConfig } from '../task-runner';
 
 export class ElementManipulator extends Basic<ElementManipulatorConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: ElementManipulatorConfig, root: JQuery<HTMLElement>): Promise<any> {
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: ElementManipulatorConfig): Promise<any> {
     for (const [selector, rules] of Object.entries(config)) {
-      let elements: JQuery<HTMLElement> | undefined;
-      if (root) {
-        elements =
-          selector === '>' ? root :
-          selector.startsWith('>') ? root.find(selector.substr(1)) :
-          selector === '<' ? root.parent() :
-          selector.startsWith('<') ? root.parents(selector.substr(1)) :
-          $(selector);
-      } else {
-        elements =
-          selector === '>' ? $('body') :
-          selector.startsWith('>') ? $(selector.substr(1)) :
-          selector === '<' ? $('head') :
-          selector.startsWith('<') ? $('head ' + selector.substr(1)) :
-          $(selector);
-      }
+      const elements =
+        selector === '>' ? context.rootElement :
+        selector.startsWith('>') ? context.rootElement.find(selector.substr(1)) :
+        selector === '<' ? context.rootElement.parent() :
+        selector.startsWith('<') ? context.rootElement.parents(selector.substr(1)) :
+        $(selector);
 
       if (rules.addClass) {
         elements.addClass(rules.addClass);

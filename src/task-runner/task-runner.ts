@@ -14,10 +14,20 @@ import { Switch } from './task-modules/switch';
  *  - Evaluate
  */
 
-
-export class TaskRunnerContext {
+export interface ITaskRunnerContext {
+  errors?: { [taskName: string]: Error };
+  metadata?: any;
+  data?: any;
+  rootElement?: JQuery<any>;
+}
+export class TaskRunnerContext implements ITaskRunnerContext {
   errors: { [taskName: string]: Error } = {};
-  constructor (public metadata: any = {}, public data: any = {}, public root: JQuery<any> = $(document)) { };
+  metadata: any = {};
+  data: any = {};
+  rootElement: JQuery<any> = $(document);
+  constructor (config?: ITaskRunnerContext) {
+    Object.assign(this, config || {});
+  };
 }
 
 export class TaskRunner {
@@ -34,7 +44,7 @@ export class TaskRunner {
 
   static renderer = new Renderer();
 
-  static async run(tasks: TaskConfig[], context: TaskRunnerContext = new TaskRunnerContext(), root?: JQuery<HTMLElement>, renderOutput?: RenderConfig): Promise<any> {
+  static async run(tasks: TaskConfig[], context: TaskRunnerContext = new TaskRunnerContext(), renderOutput?: RenderConfig): Promise<any> {
     console.log('About to run the following tasks', tasks);
     for (const task of tasks) {
       const taskModule = TaskRunner.taskModules.hasOwnProperty(task.type) ? TaskRunner.taskModules[task.type] : TaskRunner.taskModules.basic;
@@ -43,7 +53,7 @@ export class TaskRunner {
       console.log('Running task', taskName, task);
 
       try {
-        const taskOutput = await taskModule.execute(context, task, root);
+        const taskOutput = await taskModule.execute(context, task);
         console.log('Task output', taskOutput);
         context.data[taskName] = taskOutput;
         if (typeof taskOutput === 'object' && taskOutput.hasOwnProperty('__halt') && taskOutput.__halt === true) {

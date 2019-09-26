@@ -4,13 +4,13 @@ import { TaskRunnerContext, TaskConfig } from '../task-runner';
 import { Bristles } from 'bristles';
 
 export class DomReader extends Basic<DomReaderRules> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: DomReaderRules, root: JQuery<HTMLElement>): Promise<any> {
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: DomReaderRules): Promise<any> {
     const output: any = {};
 
     for (const [name, rule] of Object.entries(config)) {
       const values: any[] = [];
 
-      const elements = rule.selector ? root.find(rule.selector) : root;
+      const elements = rule.selector ? context.rootElement.find(rule.selector) : context.rootElement;
 
       for (const element of Array.from(elements)) {
         let value: any = null;
@@ -30,7 +30,7 @@ export class DomReader extends Basic<DomReaderRules> {
                 value = $(element).attr(attribute);
             }
           } else if (rule.attribute) {
-            value = await this.main(context, taskConfig, rule.attribute, $(element));
+            value = await this.main(context, taskConfig, rule.attribute);
           }
         }
 

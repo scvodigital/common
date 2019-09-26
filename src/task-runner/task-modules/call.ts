@@ -5,9 +5,9 @@ import { TaskRunnerContext, TaskConfig } from '../task-runner';
 import { ObjectCompiler } from '../object-compiler';
 
 export class Call extends Basic<CallConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: CallConfig, root: JQuery<HTMLElement>): Promise<any> {
-    const owner = this.objectResolver(config.owner, context, root);
-    const callContext = config.context ? this.objectResolver(config.context, context, root) : owner;
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: CallConfig): Promise<any> {
+    const owner = this.objectResolver(config.owner, context);
+    const callContext = config.context ? this.objectResolver(config.context, context) : owner;
 
     if (typeof owner[config.functionName] !== 'function') {
       throw new Error(`Could not find function '${config.functionName} on '${JSON.stringify(config.owner)}`);
@@ -24,7 +24,7 @@ export class Call extends Basic<CallConfig> {
     }
   }
 
-  objectResolver(targetConfig: CallObject | CallElement, context: TaskRunnerContext, root: JQuery): any {
+  objectResolver(targetConfig: CallObject | CallElement, context: TaskRunnerContext): any {
     let target: Object|undefined;
     let query = '';
 
@@ -34,22 +34,13 @@ export class Call extends Basic<CallConfig> {
       target = ObjectCompiler.objectPath(targetContext, query);
     } else if (targetConfig.type === 'JQuery' || targetConfig.type === 'HTMLElement') {
       query = targetConfig.selector;
-      let elements: JQuery<HTMLElement> | undefined;
-      if (root) {
-        elements =
-          query === '>' ? root :
-          query.startsWith('>') ? root.find(query.substr(1)) :
-          query === '<' ? root.parent() :
-          query.startsWith('<') ? root.parents(query.substr(1)) :
-          $(query);
-      } else {
-        elements =
-          query === '>' ? $('body') :
-          query.startsWith('>') ? $(query.substr(1)) :
-          query === '<' ? $('head') :
-          query.startsWith('<') ? $('head ' + query.substr(1)) :
-          $(query);
-      }
+      const elements =
+        query === '>' ? context.rootElement :
+        query.startsWith('>') ? context.rootElement.find(query.substr(1)) :
+        query === '<' ? context.rootElement.parent() :
+        query.startsWith('<') ? context.rootElement.parents(query.substr(1)) :
+        $(query);
+
       if (elements.length > 0) {
         target = targetConfig.type === 'JQuery' ? elements : elements[0];
       }

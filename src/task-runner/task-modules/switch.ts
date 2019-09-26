@@ -3,7 +3,7 @@ import { TaskRunner, TaskRunnerContext, TaskConfig } from '../task-runner';
 import { RenderConfig } from '../renderer';
 
 export class Switch extends Basic<SwitchConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: SwitchConfig, root: JQuery<HTMLElement>): Promise<any> {
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: SwitchConfig): Promise<any> {
     if (!config.branches.hasOwnProperty(config.which)) {
       throw Error(`No branch '${config.which} exists`);
     }
@@ -12,7 +12,7 @@ export class Switch extends Basic<SwitchConfig> {
 
     let output: any;
     if (branch.tasks) {
-      output = await TaskRunner.run(branch.tasks, context, root, branch.renderOutput);
+      output = await TaskRunner.run(branch.tasks, context, branch.renderOutput);
     }
 
     if (branch.halt) {

@@ -16,12 +16,6 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
   }
 
   handleEvent(event: Event) {
-    const context = new TaskRunnerContext({
-      event,
-      window,
-      $,
-      instance: this,
-    }, {}, this.element);
     const eventConfig = this.config[event.type];
 
     if (eventConfig.preventDefault) {
@@ -36,8 +30,15 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       event.stopImmediatePropagation();
     }
 
-    const target = $(event.currentTarget as HTMLElement || this.element);
-    TaskRunner.run(eventConfig.tasks, context, target).then().catch(err => {
+    const context = new TaskRunnerContext({
+      metadata: {
+        event,
+        instance: this,
+      },
+      rootElement: $(event.currentTarget as HTMLElement || this.element)
+    });
+
+    TaskRunner.run(eventConfig.tasks, context).then().catch(err => {
       console.error('TasksTrigger Failed', err);
     });
   }
