@@ -7,11 +7,11 @@ import { DomReader } from './task-modules/dom-reader';
 import { Request } from './task-modules/request';
 import { Call } from './task-modules/call';
 import { JsonLogic } from './task-modules/json-logic';
+import { Switch } from './task-modules/switch';
 
 /**
  * TODO: Create the following tasks
  *  - Evaluate
- *  - Switch
  */
 
 
@@ -28,6 +28,7 @@ export class TaskRunner {
     domReader: new DomReader(),
     call: new Call(),
     jsonLogic: new JsonLogic(),
+    switch: new Switch(),
     basic: new Basic()
   }
 
