@@ -53,6 +53,13 @@ module.exports = {
             loader: 'expose-loader',
             options: '$'
         }]
+      },
+      {
+        test: require.resolve('firebase/app'),
+        use: [{
+          loader: 'expose-loader',
+          options: 'firebase'
+        }]
       }
     ]
   },
