@@ -9,6 +9,18 @@ import { Call } from './task-modules/call';
 import { JsonLogic } from './task-modules/json-logic';
 import { Switch } from './task-modules/switch';
 
+import { FirebaseChangeEmail } from './task-modules/firebase-change-email';
+import { FirebaseChangePassword } from './task-modules/firebase-change-password';
+import { FirebaseCreateAccount } from './task-modules/firebase-create-account';
+import { FirebaseDeleteUser } from './task-modules/firebase-delete-user';
+import { FirebaseGetUser } from './task-modules/firebase-get-user';
+import { FirebaseLinkProvider } from './task-modules/firebase-link-provider';
+import { FirebaseSendPasswordReset } from './task-modules/firebase-send-password-reset';
+import { FirebaseSignInEmailPassword } from './task-modules/firebase-sign-in-email-password';
+import { FirebaseSignInProvider } from './task-modules/firebase-sign-in-provider';
+import { FirebaseSignOut } from './task-modules/firebase-sign-out';
+import { FirebaseUnlinkProvider } from './task-modules/firebase-unlink-provider';
+
 /**
  * TODO: Create the following tasks
  *  - Evaluate
@@ -39,6 +51,17 @@ export class TaskRunner {
     call: new Call(),
     jsonLogic: new JsonLogic(),
     switch: new Switch(),
+    firebaseChangeEmail: new FirebaseChangeEmail(),
+    firebaseChangePassword: new FirebaseChangePassword(),
+    firebaseCreateAccount: new FirebaseCreateAccount(),
+    firebaseDeleteUser: new FirebaseDeleteUser(),
+    firebaseGetUser: new FirebaseGetUser(),
+    firebaseLinkProvider: new FirebaseLinkProvider(),
+    firebaseSendPasswordReset: new FirebaseSendPasswordReset(),
+    firebaseSignInEmailPassword: new FirebaseSignInEmailPassword(),
+    firebaseSignInProvider: new FirebaseSignInProvider(),
+    firebaseSignOut: new FirebaseSignOut(),
+    firebaseUnlinkProvider: new FirebaseUnlinkProvider(),
     basic: new Basic()
   }
 
