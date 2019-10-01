@@ -14,12 +14,15 @@ export class Switch extends Basic<SwitchConfig> {
       throw new Error(`No branch called '${config.which}' or 'default' exists`);
     }
 
-    let output: any = {};
+    let output: any;
     if (branch.tasks) {
       output = await TaskRunner.run(branch.tasks, context, branch.renderOutput);
     }
 
     if (branch.halt) {
+      if (!output) {
+        output = {};
+      }
       output.__halt = true;
     }
 
