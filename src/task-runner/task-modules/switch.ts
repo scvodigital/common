@@ -32,7 +32,10 @@ export class Switch extends Basic<SwitchConfig> {
 
 export interface SwitchConfig {
   which: string;
-  branches: { [branchName: string]: Branch }
+  branches: {
+    default: Branch;
+    [branchName: string]: Branch
+  }
 }
 
 export interface Branch {

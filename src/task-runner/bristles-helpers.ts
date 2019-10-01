@@ -5,7 +5,7 @@ export class BristlesHelpers {
       const context = $(helper.hash.context || document);
 
       const element =
-        typeof selector === 'object' && !!selector && typeof (selector as any).jquery === 'string' ? selector :
+        typeof selector === 'object' && !!selector && 'jquery' in selector ? selector :
         typeof selector === 'string' ? context.find(selector) as any :
         context;
 
