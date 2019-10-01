@@ -4,7 +4,10 @@ export class BristlesHelpers {
       const helper: HelperOptions = arguments[arguments.length - 1];
       const context = $(helper.hash.context || document);
 
-      const element = typeof selector !== 'string' ? context : context.find(selector) as any;
+      const element =
+        typeof selector !== 'string' ? context :
+        typeof selector === 'object' && selector && (selector as any).hasOwnProperty('jquery') ? selector :
+        context.find(selector) as any;
 
       if (typeof method !== 'string') {
         return element;
