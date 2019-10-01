@@ -9,8 +9,8 @@ export class FirebaseSignInProvider extends FirebaseBase<FirebaseSignInProviderC
     try {
       await this.sessionCleanUp();
 
-      console.log('Finding Provider', config.providerName, 'in', this.providers);
-      const provider = this.providers[config.providerName].provider;
+      console.log('Finding Provider', config.providerId, 'in', this.providers);
+      const provider = this.providers[config.providerId].provider;
 
       console.log('Signing in with', provider);
       const userCredential = await this.app.auth().signInWithPopup(provider);
@@ -29,5 +29,5 @@ export class FirebaseSignInProvider extends FirebaseBase<FirebaseSignInProviderC
 }
 
 export interface FirebaseSignInProviderConfig {
-  providerName: string;
+  providerId: string;
 }

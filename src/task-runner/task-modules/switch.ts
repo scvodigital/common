@@ -4,11 +4,15 @@ import { RenderConfig } from '../renderer';
 
 export class Switch extends Basic<SwitchConfig> {
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: SwitchConfig): Promise<any> {
-    if (!config.branches.hasOwnProperty(config.which)) {
-      throw Error(`No branch '${config.which} exists`);
-    }
+    let branch: Branch|undefined;
 
-    const branch = config.branches[config.which];
+    if (config.branches.hasOwnProperty(config.which)) {
+      branch = config.branches[config.which];
+    } else if (config.branches.default) {
+      branch = config.branches.default;
+    } else {
+      throw new Error(`No branch called '${config.which}' or 'default' exists`);
+    }
 
     let output: any;
     if (branch.tasks) {
