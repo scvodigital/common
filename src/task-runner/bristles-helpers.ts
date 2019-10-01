@@ -6,7 +6,7 @@ export class BristlesHelpers {
 
       const element =
         typeof selector !== 'string' ? context :
-        typeof selector === 'object' && selector && typeof (selector as any).jquery === 'string' ? selector :
+        typeof selector === 'object' && !!selector && typeof (selector as any).jquery === 'string' ? selector :
         context.find(selector) as any;
 
       if (typeof method !== 'string') {
