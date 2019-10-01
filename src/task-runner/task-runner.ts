@@ -1,5 +1,7 @@
 import { RenderConfig, Renderer } from './renderer';
 
+const JSON6 = require('json-6');
+
 import { Basic } from './task-modules/basic';
 import { ElementManipulator } from './task-modules/element-manipulator';
 import { Delay } from './task-modules/delay';
@@ -69,9 +71,18 @@ export class TaskRunner {
 
   static renderer = new Renderer();
 
-  static async run(tasks: TaskConfig[], context: TaskRunnerContext = new TaskRunnerContext(), renderOutput?: RenderConfig): Promise<any> {
+  static async run(tasks: (TaskConfig | string)[], context: TaskRunnerContext = new TaskRunnerContext(), renderOutput?: RenderConfig): Promise<any> {
     console.log('About to run the following tasks', tasks);
-    for (const task of tasks) {
+    for (const taskItem of tasks) {
+      let task: TaskConfig|undefined;
+
+      if (typeof taskItem === 'string') {
+        const taskJson = $(`script[data-task="${taskItem}"]`).html();
+        task = JSON6.parse(taskJson) as TaskConfig;
+      } else {
+        task = taskItem;
+      }
+
       const taskModule = TaskRunner.taskModules.hasOwnProperty(task.type) ? TaskRunner.taskModules[task.type] : TaskRunner.taskModules.basic;
       const taskName = task.name || taskModule.moduleType + '-' + Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000;
 
@@ -85,7 +96,7 @@ export class TaskRunner {
           break;
         }
       } catch (err) {
-        console.error('Failed to run task', err);
+        console.error('Failed to run task', err, task);
         context.errors[taskName] = err;
         if (task.haltOnError) {
           break;
