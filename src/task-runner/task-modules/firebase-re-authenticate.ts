@@ -29,13 +29,13 @@ export class FirebaseReAuthenticate extends FirebaseBase<FirebaseReAuthenticateC
           throw new Error('Failed to re-authenticate user by email and password');
         }
       } else {
-        if (!this.providers[this.currentUser.providerId]) {
+        if (!this.providers.hasOwnProperty(config.providerId)) {
           throw new Error('The current provider for the authenticated user is not in the available provider list. This should not be able to happen');
         }
-        const currentProvider = this.providers[this.currentUser.providerId].provider;
+        const currentProvider = this.providers[config.providerId].provider;
         userCredential = await this.currentUser.reauthenticateWithPopup(currentProvider);
         if (!userCredential || !userCredential.user) {
-          throw new Error(`Failed to re-authenticate user by provider ${this.currentUser.providerId}`);
+          throw new Error(`Failed to re-authenticate user by provider ${config.providerId}`);
         }
       }
 
