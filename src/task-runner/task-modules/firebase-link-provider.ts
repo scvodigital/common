@@ -19,8 +19,6 @@ export class FirebaseLinkProvider extends FirebaseBase<FirebaseLinkProviderConfi
         throw new Error(`Already linked to provider ${config.providerId}`);
       }
 
-      await this.reAuthenticate(config.currentPassword);
-
       const newProvider = this.providers[config.providerId].provider;
       await this.currentUser.linkWithPopup(newProvider);
 
@@ -34,5 +32,4 @@ export class FirebaseLinkProvider extends FirebaseBase<FirebaseLinkProviderConfi
 
 export interface FirebaseLinkProviderConfig {
   providerId: string;
-  currentPassword?: string;
 }

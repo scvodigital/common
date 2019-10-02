@@ -19,8 +19,8 @@ import { FirebaseDeleteUser } from './task-modules/firebase-delete-user';
 import { FirebaseGetUser } from './task-modules/firebase-get-user';
 import { FirebaseLinkProvider } from './task-modules/firebase-link-provider';
 import { FirebaseSendPasswordReset } from './task-modules/firebase-send-password-reset';
-import { FirebaseSignInEmailPassword } from './task-modules/firebase-sign-in-email-password';
-import { FirebaseSignInProvider } from './task-modules/firebase-sign-in-provider';
+import { FirebaseReAuthenticate } from './task-modules/firebase-re-authenticate';
+import { FirebaseSignIn } from './task-modules/firebase-sign-in';
 import { FirebaseSignOut } from './task-modules/firebase-sign-out';
 import { FirebaseUnlinkProvider } from './task-modules/firebase-unlink-provider';
 
@@ -62,9 +62,9 @@ export class TaskRunner {
     firebaseGetUser: new FirebaseGetUser(),
     firebaseLinkProvider: new FirebaseLinkProvider(),
     firebaseSendPasswordReset: new FirebaseSendPasswordReset(),
-    firebaseSignInEmailPassword: new FirebaseSignInEmailPassword(),
-    firebaseSignInProvider: new FirebaseSignInProvider(),
+    firebaseSignIn: new FirebaseSignIn(),
     firebaseSignOut: new FirebaseSignOut(),
+    firebaseReAuthenticate: new FirebaseReAuthenticate(),
     firebaseUnlinkProvider: new FirebaseUnlinkProvider(),
     basic: new Basic()
   }

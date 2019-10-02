@@ -7,10 +7,6 @@ import { TaskRunnerContext, TaskConfig } from '../task-runner';
 export class FirebaseChangePassword extends FirebaseBase<FirebaseChangePasswordConfig> {
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: FirebaseChangePasswordConfig): Promise<any> {
     try {
-      if (!config.currentPassword) {
-        throw new Error('No current password was provided');
-      }
-
       if (config.password !== config.passwordConfirm) {
         throw new Error('The two passwords entered do not match');
       }
@@ -22,8 +18,6 @@ export class FirebaseChangePassword extends FirebaseBase<FirebaseChangePasswordC
       if (!this.currentUser.email) {
         throw new Error('Current user has not authenticated by Email before');
       }
-
-      await this.reAuthenticate(config.currentPassword);
 
       await this.currentUser.updatePassword(config.password);
 
@@ -38,5 +32,4 @@ export class FirebaseChangePassword extends FirebaseBase<FirebaseChangePasswordC
 export interface FirebaseChangePasswordConfig {
   password: string;
   passwordConfirm: string;
-  currentPassword: string;
 }

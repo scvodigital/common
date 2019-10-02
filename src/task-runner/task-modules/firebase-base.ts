@@ -119,35 +119,6 @@ export abstract class FirebaseBase<T> extends Basic<any> {
     });
   }
 
-  async reAuthenticate(currentPassword?: string) {
-    if (!this.currentUser) {
-      throw new Error('Not signed in');
-    }
-
-    let userCredential: Firebase.auth.UserCredential | undefined;
-    if (this.currentUser.providerId === 'password') {
-      if (!this.currentUser.email || !currentPassword) {
-        throw new Error('No current password was provided')
-      }
-      const authCredential = Firebase.auth.EmailAuthProvider.credential(this.currentUser.email, currentPassword);
-      userCredential = await this.currentUser.reauthenticateWithCredential(authCredential);
-      if (!userCredential || !userCredential.user) {
-        throw new Error('Failed to re-authenticate user by email and password');
-      }
-    } else {
-      if (!this.providers[this.currentUser.providerId]) {
-        throw new Error('The current provider for the authenticated user is not in the available provider list. This should not be able to happen');
-      }
-      const currentProvider = this.providers[this.currentUser.providerId].provider;
-      userCredential = await this.currentUser.reauthenticateWithPopup(currentProvider);
-      if (!userCredential || !userCredential.user) {
-        throw new Error(`Failed to re-authenticate user by provider ${this.currentUser.providerId}`);
-      }
-    }
-
-    return userCredential;
-  }
-
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: any): Promise<any> {
     return null;
   }

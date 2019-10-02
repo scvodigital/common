@@ -4,14 +4,12 @@ import 'firebase/auth';
 import { FirebaseBase } from './firebase-base';
 import { TaskRunnerContext, TaskConfig } from '../task-runner';
 
-export class FirebaseDeleteUser extends FirebaseBase<FirebaseDeleteUserConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: FirebaseDeleteUserConfig): Promise<any> {
+export class FirebaseDeleteUser extends FirebaseBase<any> {
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: any): Promise<any> {
     try {
       if (!this.currentUser) {
         throw new Error('Not signed in');
       }
-
-      await this.reAuthenticate(config.currentPassword);
 
       await this.currentUser.delete();
 
@@ -23,8 +21,4 @@ export class FirebaseDeleteUser extends FirebaseBase<FirebaseDeleteUserConfig> {
       throw err;
     }
   }
-}
-
-export interface FirebaseDeleteUserConfig {
-  currentPassword?: string;
 }

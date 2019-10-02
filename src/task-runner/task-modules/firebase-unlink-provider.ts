@@ -19,8 +19,6 @@ export class FirebaseUnlinkProvider extends FirebaseBase<FirebaseUnlinkProviderC
         throw new Error(`User has not linked to provider ${config.providerId}`);
       }
 
-      await this.reAuthenticate(config.currentPassword);
-
       await this.currentUser.unlink(config.providerId);
 
       return true;
@@ -33,5 +31,4 @@ export class FirebaseUnlinkProvider extends FirebaseBase<FirebaseUnlinkProviderC
 
 export interface FirebaseUnlinkProviderConfig {
   providerId: string;
-  currentPassword?: string;
 }
