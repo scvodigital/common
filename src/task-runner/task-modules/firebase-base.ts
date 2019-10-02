@@ -45,7 +45,8 @@ export abstract class FirebaseBase<T> extends Basic<any> {
       'google.com': new FirebaseProvider('Google', new Firebase.auth.GoogleAuthProvider(), ['email']),
       'facebook.com': new FirebaseProvider('Facebook', new Firebase.auth.FacebookAuthProvider, ['email']),
       'twitter.com': new FirebaseProvider('Twitter', new Firebase.auth.TwitterAuthProvider()),
-      'github.com': new FirebaseProvider('Github', new Firebase.auth.GithubAuthProvider(), ['user:email'])
+      'github.com': new FirebaseProvider('Github', new Firebase.auth.GithubAuthProvider(), ['user:email']),
+      'password': new FirebaseProvider('Email and password', new Firebase.auth.EmailAuthProvider())
     }
   }
 
