@@ -73,6 +73,12 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
           }
         }
       }
+
+      if (rules.focus) {
+        setTimeout(() => {
+          elements.focus();
+        }, 100);
+      }
     }
   }
 }
@@ -94,6 +100,7 @@ export interface ElementManipulatorConfig {
     contents?: string;
     value?: string;
     createElement?: CreateElementConfig | CreateElementConfig[];
+    focus?: boolean;
   };
 }
 
