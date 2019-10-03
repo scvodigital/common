@@ -11,6 +11,7 @@ import { Call } from './task-modules/call';
 import { JsonLogic } from './task-modules/json-logic';
 import { Switch } from './task-modules/switch';
 import { Run } from './task-modules/run';
+import { MultiTask } from './task-modules/multi-task';
 
 import { FirebaseChangeEmail } from './task-modules/firebase-change-email';
 import { FirebaseChangePassword } from './task-modules/firebase-change-password';
@@ -55,6 +56,7 @@ export class TaskRunner {
     jsonLogic: new JsonLogic(),
     switch: new Switch(),
     run: new Run(),
+    multiTask: new MultiTask(),
     firebaseChangeEmail: new FirebaseChangeEmail(),
     firebaseChangePassword: new FirebaseChangePassword(),
     firebaseCreateAccount: new FirebaseCreateAccount(),
