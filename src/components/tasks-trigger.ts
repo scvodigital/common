@@ -30,14 +30,13 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       rootElement: $(event.currentTarget as HTMLElement || this.element)
     });
 
-    TaskRunner.run(eventConfig.tasks, context).then().catch(err => {
-      console.error('TasksTrigger Failed', err);
-    });
-
     this.setEventFlag(event, 'preventDefault', context, eventConfig);
     this.setEventFlag(event, 'stopPropagation', context, eventConfig);
     this.setEventFlag(event, 'stopImmediatePropagation', context, eventConfig);
 
+    TaskRunner.run(eventConfig.tasks, context).then().catch(err => {
+      console.error('TasksTrigger Failed', err);
+    });
   }
 
   setEventFlag(event: Event, flag: 'preventDefault'|'stopPropagation'|'stopImmediatePropagation', context: TaskRunnerContext, eventConfig: EventConfig) {

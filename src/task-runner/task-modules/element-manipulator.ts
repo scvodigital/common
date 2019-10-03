@@ -48,6 +48,10 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
         elements.html(rules.contents);
       }
 
+      if (typeof rules.value === 'string') {
+        elements.val(rules.value);
+      }
+
       if (rules.createElement) {
         if (!Array.isArray(rules.createElement)) {
           rules.createElement = [rules.createElement];
@@ -88,6 +92,7 @@ export interface ElementManipulatorConfig {
       [key: string]: any;
     }
     contents?: string;
+    value?: string;
     createElement?: CreateElementConfig | CreateElementConfig[];
   };
 }
