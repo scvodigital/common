@@ -141,8 +141,8 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       return;
     }
 
-    const aboveTop = Math.min(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100;
-    const belowBottom = Math.min(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100;
+    const aboveTop = Math.floor(Math.max(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100);
+    const belowBottom = Math.floor(Math.max(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100);
     const onScreen = 100 - aboveTop - belowBottom;
 
     console.log(`CHECK VIEWPORT => aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, onScreen: ${onScreen}`);
