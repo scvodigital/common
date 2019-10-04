@@ -26,6 +26,7 @@ export class Renderer {
 
   constructor() {
     this.registerHelpers();
+    this.registerPartials();
   }
 
   registerHelpers() {
@@ -40,6 +41,19 @@ export class Renderer {
       }
     } catch (err) {
       console.error('Failed to register Bristles Helpers', err);
+    }
+  }
+
+  registerPartials() {
+    try {
+      const partialElements = $('script[data-partial]');
+      partialElements.each((index, element) => {
+        const name = $(element).data('partial');
+        const template = $(element).html();
+        Bristles.registerPartial(name, template);
+      });
+    } catch (err) {
+      console.error('Failed to register Bristles Partials', err);
     }
   }
 
