@@ -49,7 +49,7 @@ export class Renderer {
       const partialElements = $('script[data-partial]');
       partialElements.each((index, element) => {
         const name = $(element).data('partial');
-        const template = $(element).html();
+        const template = $(element).html().trim();
         Bristles.registerPartial(name, template);
       });
     } catch (err) {
