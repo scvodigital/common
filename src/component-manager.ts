@@ -3,6 +3,7 @@ import { BaseComponent } from './components/base-component';
 import { LeafletMap } from './components/leaflet-map';
 import { Typeahead } from './components/typeahead';
 import { TasksTrigger } from './components/tasks-trigger';
+import { TaskRunner } from './task-runner/task-runner';
 
 require('./components.scss');
 
@@ -70,5 +71,6 @@ export interface ComponentRegistry {
 (() => {
   window.addEventListener('DOMContentLoaded', () => {
     (window as any).ComponentManager = new ComponentManager();
+    (window as any).TaskRunner = TaskRunner;
   });
 })();
