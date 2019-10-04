@@ -127,46 +127,39 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
   previousSpatialState = this.getSpatial();
   previousViewportState = this.getViewport();
   async checkViewportProximityChangeEvent(eventConfig: ViewportProximityChangeEventConfig) {
-    return;
+     const currentViewport = this.getViewport();
+     const currentSpatial = this.getSpatial();
 
-    // const currentViewport = this.getViewport();
-    // const currentSpatial = this.getSpatial();
-//
-    // const yDirection =  this.previousViewportState.viewportTop > currentViewport.viewportTop ? 'down' :
-    //                     this.previousViewportState.viewportTop < currentViewport.viewportTop ? 'up' :
-    //                     null;
-    // const xDirection =  this.previousViewportState.viewportLeft > currentViewport.viewportLeft ? 'right' :
-    //                     this.previousViewportState.viewportLeft < currentViewport.viewportLeft ? 'left' :
-    //                     null;
+     const yDirection =  this.previousViewportState.top > currentViewport.top ? 'down' :
+                         this.previousViewportState.top < currentViewport.top ? 'up' :
+                         null;
+    //  const xDirection =  this.previousViewportState.viewportLeft > currentViewport.viewportLeft ? 'right' :
+    //                      this.previousViewportState.viewportLeft < currentViewport.viewportLeft ? 'left' :
+    //                      null;
 
+    if (!yDirection || currentSpatial.bottom < currentViewport.top || currentSpatial.top > currentViewport.bottom) {
+      return;
+    }
 
+    const aboveTop = Math.min(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100;
+    const belowBottom = Math.min(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100;
+    const onScreen = 100 - aboveTop - belowBottom;
 
-    // for (const rule of eventConfig.rules) {
-    //   if (rule.scrollDirection === 'down' && yDirection === 'down') {
-    //     if (rule.verb === 'enter' && currentSpatial.top < currentViewport.viewportBottom && currentSpatial.bottom > currentViewport.viewportTop) {
-    //
-    //     }
-    //     if (rule.verb === 'leave' && currentSpatial.top < currentViewport.viewportTop && currentSpatial.bottom <= currentViewport.viewportTop) {
-    //
-    //     }
-    //   } else if (rule.scrollDirection === 'up' && yDirection === 'up') {
-//
-    //   }
-    // }
+    console.log(`CHECK VIEWPORT => aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, onScreen: ${onScreen}`);
   }
 
   getViewport(): ViewportState {
     const scrollTop = $(window).scrollTop() || 0;
     const scrollLeft = $(window).scrollLeft() || 0;
-    const viewportHeight = $(window).height() || $(document).height() || 0;
-    const viewportWidth = $(window).width() || $(document).width() || 0;
+    const height = $(window).height() || $(document).height() || 0;
+    const width = $(window).width() || $(document).width() || 0;
     return {
-      viewportHeight: viewportHeight,
-      viewportWidth: viewportWidth,
-      viewportTop: scrollTop,
-      viewportLeft: scrollLeft,
-      viewportBottom: scrollTop + viewportHeight,
-      viewportRight: scrollLeft + viewportWidth,
+      height: height,
+      width: width,
+      top: scrollTop,
+      left: scrollLeft,
+      bottom: scrollTop + height,
+      right: scrollLeft + width,
       totalHeight: $(document).height() || $(window).height() || 0,
       totalWidth: $(document).width() || $(window).width() || 0
     }
@@ -248,12 +241,12 @@ export interface Spatial {
 export interface ViewportState {
   totalHeight: number;
   totalWidth: number;
-  viewportHeight: number;
-  viewportWidth: number;
-  viewportTop: number;
-  viewportLeft: number;
-  viewportBottom: number;
-  viewportRight: number;
+  height: number;
+  width: number;
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
 }
 
 export interface SizeChangeEventConfig extends EventConfig {
