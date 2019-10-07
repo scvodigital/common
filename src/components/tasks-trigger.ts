@@ -149,9 +149,8 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
 
     for (const rule of eventConfig.rules) {
       rule.percentageVisible = rule.percentageVisible || 0;
-      if (rule.scrollDirection !== yDirection) {
-        continue;
-      } else if (yDirection === 'down' && rule.verb === 'enter') {
+
+      if (yDirection === 'down' && rule.verb === 'enter' && rule.edge === 'bottom') {
         if (aboveBottom > rule.percentageVisible && !rule.on) {
           console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = true;
@@ -159,7 +158,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = false;
         }
-      } else if (yDirection === 'down' && rule.verb === 'leave') {
+      } else if (yDirection === 'down' && rule.verb === 'leave' && rule.edge === 'top') {
         if (aboveTop > rule.percentageVisible && !rule.on) {
           console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = true;
@@ -167,7 +166,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = false;
         }
-      } else if (yDirection === 'up' && rule.verb === 'enter') {
+      } else if (yDirection === 'up' && rule.verb === 'enter' && rule.edge === 'top') {
         if (belowTop > rule.percentageVisible && !rule.on) {
           console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = true;
@@ -175,7 +174,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = false;
         }
-      } else if (yDirection === 'up' && rule.verb === 'leave') {
+      } else if (yDirection === 'up' && rule.verb === 'leave' && rule.edge === 'bottom') {
         if (belowBottom > rule.percentageVisible && !rule.on) {
           console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
           rule.on = true;
@@ -265,7 +264,7 @@ export interface ViewportProximityChangeEventConfig extends EventConfig {
 
 export interface ViewportProximityChangeEventRule {
   verb: 'leave'|'enter';
-  scrollDirection?: 'up'|'down'|'left'|'right';
+  edge: 'bottom'|'top';
   percentageVisible?: number;
   tasks: (TaskConfig | string)[];
   on?: boolean;
