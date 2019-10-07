@@ -128,8 +128,8 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
   getViewport(): Spatial {
     const scrollTop = $(window).scrollTop() || 0;
     const scrollLeft = $(window).scrollLeft() || 0;
-    const height = $(window).height() || $(document).height() || 0;
-    const width = $(window).width() || $(document).width() || 0;
+    const height = $(window).height() || 0;
+    const width = $(window).width() || 0;
 
     return {
       height: height,
@@ -198,7 +198,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       }
 
       if (previousRuleState !== rule.on) {
-        console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, sourceCoord, targetCoord);
+        console.log(`Rule ${rule.on ? 'ON' : 'OFF'} => Scrolling ${scrollDirection}, Source ${sourceEdge}: ${sourceCoord}, Target ${targetEdge}: ${targetCoord}`);
       }
     }
   }
