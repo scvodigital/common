@@ -162,7 +162,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       if (rule.scrollDirection === scrollDirection && rule.on) continue;
       if (rule.scrollDirection !== scrollDirection && !rule.on) continue;
 
-      const sourceEdge = rule.sourceEdge || 'bottom';
+      const sourceEdge = rule.sourceEdge || 'top';
       let sourceOffset = rule.sourceOffset || 0;
       let sourceCoord = sourceEdge === 'bottom' ? source.bottom : source.top;
 
@@ -190,11 +190,11 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       if (rule.scrollDirection === scrollDirection && !rule.on) {
         rule.on =
           (scrollDirection === 'down' && targetCoord > sourceCoord) ||
-          (scrollDirection === 'up' &&targetCoord < sourceCoord);
+          (scrollDirection === 'up' && targetCoord < sourceCoord);
       } else if (rule.scrollDirection !== scrollDirection && rule.on) {
         rule.on =
           (scrollDirection === 'down' && targetCoord < sourceCoord) ||
-          (scrollDirection === 'up' &&targetCoord > sourceCoord);
+          (scrollDirection === 'up' && targetCoord > sourceCoord);
       }
 
       if (previousRuleState !== rule.on) {
