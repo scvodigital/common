@@ -114,6 +114,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     const height = this.element.outerHeight() || this.element.height() || 0;
     const width = this.element.outerWidth() || this.element.width() || 0;
     const position = this.element.offset() || { top: 0, left: 0 };
+
     return {
       height: height,
       width: width,
@@ -141,11 +142,49 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       return;
     }
 
-    const aboveTop = Math.floor(Math.max(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100);
-    const belowBottom = Math.floor(Math.max(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100);
-    const onScreen = 100 - aboveTop - belowBottom;
+    const aboveTop = Math.max(Math.max(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100, 100);
+    const belowTop = 100 - aboveTop;
+    const belowBottom = Math.max(Math.max(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100);
+    const aboveBottom = 100 - belowBottom;
 
-    console.log(`CHECK VIEWPORT => aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, onScreen: ${onScreen}`);
+    for (const rule of eventConfig.rules) {
+      rule.percentageVisible = rule.percentageVisible || 0;
+      if (rule.scrollDirection !== yDirection) {
+        continue;
+      } else if (yDirection === 'down' && rule.verb === 'enter') {
+        if (aboveBottom > rule.percentageVisible && !rule.on) {
+          console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = true;
+        } else if (aboveBottom <= rule.percentageVisible && rule.on) {
+          console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = false;
+        }
+      } else if (yDirection === 'down' && rule.verb === 'leave') {
+        if (aboveTop > rule.percentageVisible && !rule.on) {
+          console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = true;
+        } else if (aboveTop <= rule.percentageVisible && rule.on) {
+          console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = false;
+        }
+      } else if (yDirection === 'up' && rule.verb === 'enter') {
+        if (belowTop > rule.percentageVisible && !rule.on) {
+          console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = true;
+        } else if (belowTop <= rule.percentageVisible && rule.on) {
+          console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = false;
+        }
+      } else if (yDirection === 'up' && rule.verb === 'leave') {
+        if (belowBottom > rule.percentageVisible && !rule.on) {
+          console.log(`CHECK VIEWPORT => rule ON. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = true;
+        } else if (belowBottom <= rule.percentageVisible && rule.on) {
+          console.log(`CHECK VIEWPORT => rule OFF. aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, rule:`, rule);
+          rule.on = false;
+        }
+      }
+    }
 
     this.previousViewportState = currentViewport;
   }
@@ -229,6 +268,7 @@ export interface ViewportProximityChangeEventRule {
   scrollDirection?: 'up'|'down'|'left'|'right';
   percentageVisible?: number;
   tasks: (TaskConfig | string)[];
+  on?: boolean;
 }
 
 export interface Spatial {
