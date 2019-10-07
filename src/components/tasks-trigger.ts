@@ -175,7 +175,9 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       }
 
       const target = typeof rule.targetSelector === 'undefined' || rule.targetSelector === 'viewport' ? currentViewport : this.getSpatial($(rule.targetSelector));
-      const targetEdge = rule.targetEdge || sourceEdge === 'bottom' ? 'top' : 'bottom';
+      const targetEdge =
+        ['top', 'bottom'].includes(rule.targetEdge || '') ? rule.targetEdge :
+        sourceEdge === 'top' ? 'bottom' : 'top';
       let targetOffset = rule.targetOffset || 0;
       let targetCoord = targetEdge === 'bottom' ? target.bottom : target.top;
 
