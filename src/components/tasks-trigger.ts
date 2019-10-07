@@ -44,7 +44,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           await this.checkSizeChangeEvent(eventConfig as SizeChangeEventConfig);
           break;
         case ('viewportProximityChange'):
-          await this.checkViewportProximityChangeEvent(eventConfig as ProximityChangeEventConfig);
+          await this.checkScrollProximityChangeEvent(eventConfig as ScrollProximityChangeEventConfig);
           break;
         case ('scrollOutOfView'):
           break;
@@ -74,9 +74,9 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     }
   }
 
-  previousSizeState = this.getSpatial();
+  previousSizeState = this.getElementGeometry();
   async checkSizeChangeEvent(config: SizeChangeEventConfig) {
-    const currentSize = this.getSpatial();
+    const currentSize = this.getElementGeometry();
     const tasks: ContextTaskPair[] = [];
     for (const rule of config.rules) {
       const context = new TaskRunnerContext({
@@ -110,7 +110,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     }
   }
 
-  getSpatial(element: JQuery = this.element): Spatial {
+  getElementGeometry(element: JQuery = this.element): Geometry {
     const height = element.outerHeight() || element.height() || 0;
     const width = element.outerWidth() || element.width() || 0;
     const position = element.offset() || { top: 0, left: 0 };
@@ -125,7 +125,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     };
   }
 
-  getViewport(): Spatial {
+  getViewportGeometry(): Geometry {
     const scrollTop = $(window).scrollTop() || 0;
     const scrollLeft = $(window).scrollLeft() || 0;
     const height = $(window).height() || 0;
@@ -141,21 +141,20 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     }
   }
 
-  previousViewportState = this.getViewport();
-  async checkViewportProximityChangeEvent(eventConfig: ProximityChangeEventConfig) {
-    const currentViewport = this.getViewport();
-    const scrollDirection = this.previousViewportState.top < currentViewport.top ? 'down' :
-                            this.previousViewportState.top > currentViewport.top ? 'up' :
+  previousScrollTop = -1;
+  async checkScrollProximityChangeEvent(eventConfig: ScrollProximityChangeEventConfig) {
+    const viewportGeometry = this.getViewportGeometry();
+    const scrollDirection = this.previousScrollTop < viewportGeometry.top ? 'down' :
+                            this.previousScrollTop > viewportGeometry.top ? 'up' :
                             null;
-
 
     if (!scrollDirection) {
       return;
     }
 
-    this.previousViewportState = currentViewport;
+    this.previousScrollTop = viewportGeometry.top;
 
-    const source = this.getSpatial();
+    const sourceGeometry = this.getElementGeometry();
     for (const rule of eventConfig.rules) {
       const previousRuleState = rule.on;
 
@@ -164,26 +163,26 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
 
       const sourceEdge = rule.sourceEdge || 'top';
       let sourceOffset = rule.sourceOffset || 0;
-      let sourceCoord = sourceEdge === 'bottom' ? source.bottom : source.top;
+      let sourceCoord = sourceEdge === 'bottom' ? sourceGeometry.bottom : sourceGeometry.top;
 
       if (typeof sourceOffset === 'string' && sourceOffset.match(/^-?[0-9]{1,2}(\.[0-9]+)?$/)) {
         sourceOffset = Number(sourceOffset.replace('%', ''));
-        sourceOffset = (100 / source.height) * sourceOffset;
+        sourceOffset = (100 / sourceGeometry.height) * sourceOffset;
         sourceCoord = sourceCoord + sourceOffset;
       } else if (typeof sourceOffset === 'number') {
         sourceCoord = sourceCoord + sourceOffset;
       }
 
-      const target = typeof rule.targetSelector === 'undefined' || rule.targetSelector === 'viewport' ? currentViewport : this.getSpatial($(rule.targetSelector));
+      const targetGeometry = typeof rule.targetSelector === 'undefined' || rule.targetSelector === 'viewport' ? viewportGeometry : this.getElementGeometry($(rule.targetSelector));
       const targetEdge =
         ['top', 'bottom'].includes(rule.targetEdge || '') ? rule.targetEdge :
         sourceEdge === 'top' ? 'bottom' : 'top';
       let targetOffset = rule.targetOffset || 0;
-      let targetCoord = targetEdge === 'bottom' ? target.bottom : target.top;
+      let targetCoord = targetEdge === 'bottom' ? targetGeometry.bottom : targetGeometry.top;
 
       if (typeof targetOffset === 'string' && targetOffset.match(/^-?[0-9]{1,2}(\.[0-9]+)?$/)) {
         targetOffset = Number(targetOffset.replace('%', ''));
-        targetOffset = (100 / target.height) + targetOffset;
+        targetOffset = (100 / targetGeometry.height) + targetOffset;
         targetCoord = targetCoord + targetOffset;
       } else if (typeof targetOffset === 'number') {
         targetCoord = targetCoord + targetOffset;
@@ -199,8 +198,24 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           (scrollDirection === 'up' && targetCoord > sourceCoord);
       }
 
-      if (previousRuleState !== rule.on) {
-        console.log(`Rule ${rule.name || "no-name" } is now ${rule.on ? 'ON' : 'OFF'} => Scrolling ${scrollDirection}, Source ${sourceEdge}: ${sourceCoord}, Target ${targetEdge}: ${targetCoord}`);
+      if (!previousRuleState && rule.on) {
+        const context = new TaskRunnerContext({
+          metadata: {
+            event: {
+              rule,
+              sourceGeometry: sourceGeometry,
+              targetGeometry: targetGeometry,
+              sourceEdge,
+              targetEdge,
+              sourceOffset,
+              targetOffset,
+              scrollDirection
+            },
+            instance: this,
+          },
+          rootElement: this.element
+        });
+        await TaskRunner.run(rule.tasks, context);
       }
     }
   }
@@ -257,12 +272,11 @@ export interface VisibilityChangeEventConfig extends EventConfig {
   hidden?: (TaskConfig | string)[];
 }
 
-export interface ProximityChangeEventConfig extends EventConfig {
-  rules: ProximityChangeEventRule[];
+export interface ScrollProximityChangeEventConfig extends EventConfig {
+  rules: ScrollProximityChangeEventRule[];
 }
 
-export interface ProximityChangeEventRule {
-  name?: string;
+export interface ScrollProximityChangeEventRule {
   scrollDirection: 'up' | 'down';
   sourceEdge?: 'top' | 'bottom';
   sourceOffset?: number | string;
@@ -273,7 +287,7 @@ export interface ProximityChangeEventRule {
   on?: boolean;
 }
 
-export interface Spatial {
+export interface Geometry {
   height: number;
   width: number;
   top: number;
