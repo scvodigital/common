@@ -134,7 +134,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
                          this.previousViewportState.top < currentViewport.top ? 'up' :
                          null;
 
-    if (!yDirection || currentSpatial.bottom < currentViewport.top - 50 || currentSpatial.top > currentViewport.bottom + 50) {
+    if (!yDirection) {
       return;
     }
 
