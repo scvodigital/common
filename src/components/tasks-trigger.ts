@@ -137,7 +137,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     //                      this.previousViewportState.viewportLeft < currentViewport.viewportLeft ? 'left' :
     //                      null;
 
-    if (!yDirection || currentSpatial.bottom < currentViewport.top || currentSpatial.top > currentViewport.bottom) {
+    if (!yDirection || currentSpatial.bottom - 50 < currentViewport.top || currentSpatial.top - 50 > currentViewport.bottom) {
       return;
     }
 
@@ -145,7 +145,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     const belowBottom = Math.floor(Math.max(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100);
     const onScreen = 100 - aboveTop - belowBottom;
 
-    console.log(`CHECK VIEWPORT => aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, onScreen: ${onScreen}`, currentViewport, currentSpatial);
+    console.log(`CHECK VIEWPORT => aboveTop: ${aboveTop}, belowBottom: ${belowBottom}, onScreen: ${onScreen}`);
 
     this.previousViewportState = currentViewport;
   }
