@@ -198,7 +198,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       }
 
       if (previousRuleState !== rule.on) {
-        console.log(`Rule ${rule.on ? 'ON' : 'OFF'} => Scrolling ${scrollDirection}, Source ${sourceEdge}: ${sourceCoord}, Target ${targetEdge}: ${targetCoord}`);
+        console.log(`Rule ${rule.name || "no-name" } is now ${rule.on ? 'ON' : 'OFF'} => Scrolling ${scrollDirection}, Source ${sourceEdge}: ${sourceCoord}, Target ${targetEdge}: ${targetCoord}`);
       }
     }
   }
@@ -260,6 +260,7 @@ export interface ProximityChangeEventConfig extends EventConfig {
 }
 
 export interface ProximityChangeEventRule {
+  name?: string;
   scrollDirection: 'up' | 'down';
   sourceEdge?: 'top' | 'bottom';
   sourceOffset?: number | string;
