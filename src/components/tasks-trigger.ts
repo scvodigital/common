@@ -172,7 +172,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
         sourceCoord = sourceCoord + sourceOffset;
       }
 
-      const target = rule.targetSelector === 'viewport' ? currentViewport : this.getSpatial($(rule.targetSelector));
+      const target = typeof rule.targetSelector === 'undefined' || rule.targetSelector === 'viewport' ? currentViewport : this.getSpatial($(rule.targetSelector));
       const targetEdge = rule.targetEdge || sourceEdge === 'bottom' ? 'top' : 'bottom';
       let targetOffset = rule.targetOffset || 0;
       let targetCoord = targetEdge === 'bottom' ? target.bottom : target.top;
@@ -259,7 +259,7 @@ export interface ProximityChangeEventRule {
   scrollDirection: 'up' | 'down';
   sourceEdge?: 'top' | 'bottom';
   sourceOffset?: number | string;
-  targetSelector: string;
+  targetSelector?: string;
   targetEdge?: 'top' | 'bottom';
   targetOffset?: number | string;
   tasks: (TaskConfig | string)[];
