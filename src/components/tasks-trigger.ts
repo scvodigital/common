@@ -198,7 +198,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
       }
 
       if (previousRuleState !== rule.on) {
-        console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, source, target);
+        console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, sourceCoord, targetCoord);
       }
     }
   }
