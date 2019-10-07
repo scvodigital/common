@@ -44,7 +44,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           await this.checkSizeChangeEvent(eventConfig as SizeChangeEventConfig);
           break;
         case ('viewportProximityChange'):
-          await this.checkViewportProximityChangeEvent(eventConfig as ViewportProximityChangeEventConfig);
+          await this.checkViewportProximityChangeEvent(eventConfig as ProximityChangeEventConfig);
           break;
         case ('scrollOutOfView'):
           break;
@@ -110,10 +110,10 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     }
   }
 
-  getSpatial(): Spatial {
-    const height = this.element.outerHeight() || this.element.height() || 0;
-    const width = this.element.outerWidth() || this.element.width() || 0;
-    const position = this.element.offset() || { top: 0, left: 0 };
+  getSpatial(element: JQuery = this.element): Spatial {
+    const height = element.outerHeight() || element.height() || 0;
+    const width = element.outerWidth() || element.width() || 0;
+    const position = element.offset() || { top: 0, left: 0 };
 
     return {
       height: height,
@@ -125,90 +125,79 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     };
   }
 
-  previousViewportState = this.getViewport();
-  async checkViewportProximityChangeEvent(eventConfig: ViewportProximityChangeEventConfig) {
-     const currentViewport = this.getViewport();
-     const currentSpatial = this.getSpatial();
-
-     const yDirection =  this.previousViewportState.top < currentViewport.top ? 'down' :
-                         this.previousViewportState.top > currentViewport.top ? 'up' :
-                         null;
-
-    if (!yDirection) {
-      return;
-    }
-
-    const aboveTop = Math.max(Math.max(currentViewport.top - currentSpatial.top, 0) / currentSpatial.height * 100, 100);
-    const belowTop = 100 - aboveTop;
-    const belowBottom = Math.max(Math.max(currentSpatial.bottom - currentViewport.bottom, 0) / currentSpatial.height * 100);
-    const aboveBottom = 100 - belowBottom;
-
-    for (const rule of eventConfig.rules) {
-      rule.percentage = rule.percentage || 0;
-
-      if (!rule.on) {
-        if (yDirection === 'down') {
-          if (rule.rule === 'enter-bottom' && aboveBottom > rule.percentage) {
-            rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-          if (rule.rule === 'leave-top' && aboveTop > rule.percentage) {
-            rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-        } else if (yDirection === 'up') {
-          if (rule.rule === 'enter-top' && belowTop > rule.percentage) {
-            rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-          if (rule.rule === 'leave-bottom' && belowBottom > rule.percentage) {
-            rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-        }
-      } else {
-        if (yDirection === 'up') {
-          if (rule.rule === 'enter-bottom' && aboveBottom <= rule.percentage) {
-            rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-          if (rule.rule === 'leave-top' && aboveTop <= rule.percentage) {
-            rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-        } else if (yDirection === 'down') {
-          if (rule.rule === 'enter-top' && belowTop <= rule.percentage) {
-            rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-          if (rule.rule === 'leave-bottom' && belowBottom <= rule.percentage) {
-            rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
-          }
-        }
-      }
-    }
-
-    this.previousViewportState = currentViewport;
-  }
-
-  getViewport(): ViewportState {
+  getViewport(): Spatial {
     const scrollTop = $(window).scrollTop() || 0;
     const scrollLeft = $(window).scrollLeft() || 0;
     const height = $(window).height() || $(document).height() || 0;
     const width = $(window).width() || $(document).width() || 0;
+
     return {
       height: height,
       width: width,
       top: scrollTop,
       left: scrollLeft,
       bottom: scrollTop + height,
-      right: scrollLeft + width,
-      totalHeight: $(document).height() || $(window).height() || 0,
-      totalWidth: $(document).width() || $(window).width() || 0
+      right: scrollLeft + width
     }
   }
 
+  previousViewportState = this.getViewport();
+  async checkViewportProximityChangeEvent(eventConfig: ProximityChangeEventConfig) {
+    const currentViewport = this.getViewport();
+    const scrollDirection = this.previousViewportState.top < currentViewport.top ? 'down' :
+                            this.previousViewportState.top > currentViewport.top ? 'up' :
+                            null;
+
+
+    if (!scrollDirection) {
+      return;
+    }
+
+    this.previousViewportState = currentViewport;
+
+    const source = this.getSpatial();
+    for (const rule of eventConfig.rules) {
+      if (rule.scrollDirection === scrollDirection && rule.on) continue;
+      if (rule.scrollDirection !== scrollDirection && !rule.on) continue;
+
+      const sourceEdge = rule.sourceEdge || 'bottom';
+      let sourceOffset = rule.sourceOffset || 0;
+      let sourceCoord = sourceEdge === 'bottom' ? source.bottom : source.top;
+
+      if (typeof sourceOffset === 'string' && sourceOffset.match(/^-?[0-9]{1,2}(\.[0-9]+)?$/)) {
+        sourceOffset = Number(sourceOffset.replace('%', ''));
+        sourceOffset = (100 / source.height) * sourceOffset;
+        sourceCoord = sourceCoord + sourceOffset;
+      } else if (typeof sourceOffset === 'number') {
+        sourceCoord = sourceCoord + sourceOffset;
+      }
+
+      const target = rule.targetSelector === 'viewport' ? currentViewport : this.getSpatial($(rule.targetSelector));
+      const targetEdge = rule.targetEdge || sourceEdge === 'bottom' ? 'top' : 'bottom';
+      let targetOffset = rule.targetOffset || 0;
+      let targetCoord = targetEdge === 'bottom' ? target.bottom : target.top;
+
+      if (typeof targetOffset === 'string' && targetOffset.match(/^-?[0-9]{1,2}(\.[0-9]+)?$/)) {
+        targetOffset = Number(targetOffset.replace('%', ''));
+        targetOffset = (100 / target.height) + targetOffset;
+        targetCoord = targetCoord + targetOffset;
+      } else if (typeof targetOffset === 'number') {
+        targetCoord = targetCoord + targetOffset;
+      }
+
+      if (rule.scrollDirection === scrollDirection && !rule.on) {
+        rule.on =
+          (scrollDirection === 'down' && targetCoord > sourceCoord) ||
+          (scrollDirection === 'up' &&targetCoord < sourceCoord);
+      } else if (rule.scrollDirection !== scrollDirection && rule.on) {
+        rule.on =
+          (scrollDirection === 'down' && targetCoord < sourceCoord) ||
+          (scrollDirection === 'up' &&targetCoord > sourceCoord);
+      }
+
+      console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, source, target);
+    }
+  }
 
   handleEvent(event: Event) {
     const eventConfig = this.config[event.type] as StandardEventConfig;
@@ -262,13 +251,17 @@ export interface VisibilityChangeEventConfig extends EventConfig {
   hidden?: (TaskConfig | string)[];
 }
 
-export interface ViewportProximityChangeEventConfig extends EventConfig {
-  rules: ViewportProximityChangeEventRule[];
+export interface ProximityChangeEventConfig extends EventConfig {
+  rules: ProximityChangeEventRule[];
 }
 
-export interface ViewportProximityChangeEventRule {
-  rule: 'enter-top' | 'enter-bottom' | 'leave-top' | 'leave-bottom';
-  percentage?: number;
+export interface ProximityChangeEventRule {
+  scrollDirection: 'up' | 'down';
+  sourceEdge?: 'top' | 'bottom';
+  sourceOffset?: number | string;
+  targetSelector: string;
+  targetEdge?: 'top' | 'bottom';
+  targetOffset?: number | string;
   tasks: (TaskConfig | string)[];
   on?: boolean;
 }
@@ -280,17 +273,6 @@ export interface Spatial {
   left: number;
   right: number;
   bottom: number;
-}
-
-export interface ViewportState {
-  totalHeight: number;
-  totalWidth: number;
-  height: number;
-  width: number;
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
 }
 
 export interface SizeChangeEventConfig extends EventConfig {
