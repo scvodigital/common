@@ -130,8 +130,8 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
      const currentViewport = this.getViewport();
      const currentSpatial = this.getSpatial();
 
-     const yDirection =  this.previousViewportState.top > currentViewport.top ? 'down' :
-                         this.previousViewportState.top < currentViewport.top ? 'up' :
+     const yDirection =  this.previousViewportState.top < currentViewport.top ? 'down' :
+                         this.previousViewportState.top > currentViewport.top ? 'up' :
                          null;
 
     if (!yDirection) {
@@ -150,40 +150,40 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
         if (yDirection === 'down') {
           if (rule.rule === 'enter-bottom' && aboveBottom > rule.percentage) {
             rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
           if (rule.rule === 'leave-top' && aboveTop > rule.percentage) {
             rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
         } else if (yDirection === 'up') {
           if (rule.rule === 'enter-top' && belowTop > rule.percentage) {
             rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
           if (rule.rule === 'leave-bottom' && belowBottom > rule.percentage) {
             rule.on = true;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
         }
       } else {
         if (yDirection === 'up') {
           if (rule.rule === 'enter-bottom' && aboveBottom <= rule.percentage) {
             rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
           if (rule.rule === 'leave-top' && aboveTop <= rule.percentage) {
             rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
         } else if (yDirection === 'down') {
           if (rule.rule === 'enter-top' && belowTop <= rule.percentage) {
             rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
           if (rule.rule === 'leave-bottom' && belowBottom <= rule.percentage) {
             rule.on = false;
-            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}`);
+            console.log(`VIEWPORT EVENT => Rule: ${rule.rule} ${rule.on ? 'ON' : 'OFF'}. Scroll Direction: ${yDirection}, Above Top: ${aboveTop}, Below Top: ${belowTop}, Above Bottom: ${aboveBottom}, Below Bottom: ${belowBottom}`);
           }
         }
       }
