@@ -125,7 +125,6 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     };
   }
 
-  previousSpatialState = this.getSpatial();
   previousViewportState = this.getViewport();
   async checkViewportProximityChangeEvent(eventConfig: ViewportProximityChangeEventConfig) {
      const currentViewport = this.getViewport();
@@ -134,9 +133,6 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
      const yDirection =  this.previousViewportState.top > currentViewport.top ? 'down' :
                          this.previousViewportState.top < currentViewport.top ? 'up' :
                          null;
-    //  const xDirection =  this.previousViewportState.viewportLeft > currentViewport.viewportLeft ? 'right' :
-    //                      this.previousViewportState.viewportLeft < currentViewport.viewportLeft ? 'left' :
-    //                      null;
 
     if (!yDirection || currentSpatial.bottom < currentViewport.top - 50 || currentSpatial.top > currentViewport.bottom + 50) {
       return;
@@ -148,40 +144,32 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
     const aboveBottom = 100 - belowBottom;
 
     for (const rule of eventConfig.rules) {
-      rule.percentageVisible = rule.percentageVisible || 0;
+      rule.percentage = rule.percentage || 0;
 
-      if (yDirection === 'down' && rule.verb === 'enter' && rule.edge === 'bottom') {
-        if (aboveBottom > rule.percentageVisible && !rule.on) {
-          console.log(`CHECK VIEWPORT => rule ON. ENTERED from the BOTTOM`);
-          rule.on = true;
-        } else if (aboveBottom <= rule.percentageVisible && rule.on) {
-          console.log(`CHECK VIEWPORT => rule OFF. ENTERED from the BOTTOM`);
-          rule.on = false;
-        }
-      } else if (yDirection === 'down' && rule.verb === 'leave' && rule.edge === 'top') {
-        if (aboveTop > rule.percentageVisible && !rule.on) {
-          console.log(`CHECK VIEWPORT => rule ON. LEFT by the Top`);
-          rule.on = true;
-        } else if (aboveTop <= rule.percentageVisible && rule.on) {
-          console.log(`CHECK VIEWPORT => rule OFF. LEFT by the Top`);
-          rule.on = false;
-        }
-      } else if (yDirection === 'up' && rule.verb === 'enter' && rule.edge === 'top') {
-        if (belowTop > rule.percentageVisible && !rule.on) {
-          console.log(`CHECK VIEWPORT => rule ON. ENTERED from the TOP`);
-          rule.on = true;
-        } else if (belowTop <= rule.percentageVisible && rule.on) {
-          console.log(`CHECK VIEWPORT => rule OFF. ENTERED from the TOP`);
-          rule.on = false;
-        }
-      } else if (yDirection === 'up' && rule.verb === 'leave' && rule.edge === 'bottom') {
-        if (belowBottom > rule.percentageVisible && !rule.on) {
-          console.log(`CHECK VIEWPORT => rule ON. LEFT by the BOTTOM`);
-          rule.on = true;
-        } else if (belowBottom <= rule.percentageVisible && rule.on) {
-          console.log(`CHECK VIEWPORT => rule OFF. LEFT by the BOTTOM`);
-          rule.on = false;
-        }
+      if (yDirection === 'down' && rule.verb === 'enter' && rule.edge === 'bottom' && aboveBottom > rule.percentage && !rule.on) {
+        console.log(`CHECK VIEWPORT => rule ON. ENTERED from the BOTTOM`);
+        rule.on = true;
+      } else if (yDirection === 'up' && rule.verb === 'enter' && rule.edge === 'bottom' && aboveBottom <= rule.percentage && rule.on) {
+        console.log(`CHECK VIEWPORT => rule OFF. ENTERED from the BOTTOM`);
+        rule.on = false;
+      } else if (yDirection === 'down' && rule.verb === 'leave' && rule.edge === 'top' && aboveTop > rule.percentage && !rule.on) {
+        console.log(`CHECK VIEWPORT => rule ON. LEFT by the TOP`);
+        rule.on = true;
+      } else if (yDirection === 'up' && rule.verb === 'leave' && rule.edge === 'top' && aboveTop <= rule.percentage && rule.on) {
+        console.log(`CHECK VIEWPORT => rule OFF. LEFT by the TOP`);
+        rule.on = false;
+      } else if (yDirection === 'up' && rule.verb === 'enter' && rule.edge === 'top' && belowTop > rule.percentage && !rule.on) {
+        console.log(`CHECK VIEWPORT => rule ON. ENTERED from the TOP`);
+        rule.on = true;
+      } else if (yDirection === 'down' && rule.verb === 'enter' && rule.edge === 'top' && belowTop <= rule.percentage && rule.on) {
+        console.log(`CHECK VIEWPORT => rule OFF. ENTERED from the TOP`);
+        rule.on = false;
+      } else if (yDirection === 'up' && rule.verb === 'leave' && rule.edge === 'bottom' && belowBottom > rule.percentage && !rule.on) {
+        console.log(`CHECK VIEWPORT => rule ON. LEFT by the BOTTOM`);
+        rule.on = true;
+      } else if (yDirection === 'down' && rule.verb === 'leave' && rule.edge === 'bottom' && belowBottom <= rule.percentage && rule.on) {
+        console.log(`CHECK VIEWPORT => rule OFF. LEFT by the BOTTOM`);
+        rule.on = false;
       }
     }
 
@@ -265,7 +253,7 @@ export interface ViewportProximityChangeEventConfig extends EventConfig {
 export interface ViewportProximityChangeEventRule {
   verb: 'leave'|'enter';
   edge: 'bottom'|'top';
-  percentageVisible?: number;
+  percentage?: number;
   tasks: (TaskConfig | string)[];
   on?: boolean;
 }
