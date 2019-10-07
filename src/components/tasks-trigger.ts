@@ -157,6 +157,8 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
 
     const source = this.getSpatial();
     for (const rule of eventConfig.rules) {
+      const previousRuleState = rule.on;
+
       if (rule.scrollDirection === scrollDirection && rule.on) continue;
       if (rule.scrollDirection !== scrollDirection && !rule.on) continue;
 
@@ -195,7 +197,9 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
           (scrollDirection === 'up' &&targetCoord > sourceCoord);
       }
 
-      console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, source, target);
+      if (previousRuleState !== rule.on) {
+        console.log(`Rule ${rule.on ? 'ON' : 'OFF'}: ${JSON.stringify(rule)}`, source, target);
+      }
     }
   }
 
