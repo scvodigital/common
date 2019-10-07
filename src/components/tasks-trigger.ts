@@ -192,7 +192,7 @@ export class TasksTrigger extends BaseComponent<TasksTriggerConfig> {
         rule.on =
           (scrollDirection === 'down' && targetCoord > sourceCoord) ||
           (scrollDirection === 'up' && targetCoord < sourceCoord);
-      } else if (rule.scrollDirection !== scrollDirection && rule.on) {
+      } else if (rule.scrollDirection !== scrollDirection && rule.on && !rule.preventToggle) {
         rule.on =
           (scrollDirection === 'down' && targetCoord < sourceCoord) ||
           (scrollDirection === 'up' && targetCoord > sourceCoord);
@@ -283,6 +283,7 @@ export interface ScrollProximityChangeEventRule {
   targetSelector?: string;
   targetEdge?: 'top' | 'bottom';
   targetOffset?: number | string;
+  preventToggle?: boolean;
   tasks: (TaskConfig | string)[];
   on?: boolean;
 }
