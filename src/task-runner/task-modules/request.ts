@@ -1,5 +1,6 @@
 import { Basic } from './basic';
 import { TaskRunnerContext, TaskConfig } from '../task-runner';
+import { Exception } from '../../exception';
 
 export class Request extends Basic<JQueryAjaxSettings> {
   main(context: TaskRunnerContext, taskConfig: TaskConfig, config: JQueryAjaxSettings): Promise<any> {
@@ -8,7 +9,7 @@ export class Request extends Basic<JQueryAjaxSettings> {
         resolve(response);
       };
       config.error = (xhr: JQuery.jqXHR, status: JQuery.Ajax.ErrorTextStatus, error: string) => {
-        reject(new Error(`Reason: ${status}. Message: ${error}`));
+        reject(new Exception(`Reason: ${status}. Message: ${error}`));
       };
       $.ajax(config);
     });
