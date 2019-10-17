@@ -56,7 +56,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           if (!this.textbox.val()) {
             console.log('Closing tt-menu because no search query');
             this.element.find('.tt-menu').css('display', 'none');
-            this.typeahead.typeahead('val', '');
+            (this.textbox as any).typeahead('val', '');
             return [];
           }
 
