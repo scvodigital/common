@@ -53,7 +53,17 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
 
       if (bloodhoundOptions.remote) {
         bloodhoundOptions.remote.transform = (response: any) => {
-          console.log('Bloodhound response', response);
+          if (!Array.isArray(response)) {
+            return response;
+          }
+
+          for (let item of response) {
+            if (typeof item !== 'object') {
+              item = { value: item };
+            }
+            item.datasetName = dataset.name;
+          }
+
           return response;
         };
       }
