@@ -37,17 +37,25 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           item.datasetName = dataset.name;
         }
       }
+
       const datumTokenizerField = dataset.bloodhound.datumTokenizerField;
       const bloodhoundOptions: any = {
         datumTokenizer: datumTokenizerField ?
-          BloodhoundTokenizers[dataset.bloodhound.datumTokenizer](datumTokenizerField) :
-          BloodhoundTokenizers[dataset.bloodhound.datumTokenizer],
+        BloodhoundTokenizers[dataset.bloodhound.datumTokenizer](datumTokenizerField) :
+        BloodhoundTokenizers[dataset.bloodhound.datumTokenizer],
         queryTokenizer: BloodhoundTokenizers[dataset.bloodhound.queryTokenizer],
         local: dataset.bloodhound.local ? dataset.bloodhound.local.filter(Boolean) : [],
         initialize: dataset.bloodhound.hasOwnProperty('initialize') ? dataset.bloodhound.initialize : true,
         sufficient: dataset.bloodhound.sufficient || 5,
         prefetch: dataset.bloodhound.prefetch || undefined,
         remote: dataset.bloodhound.remote || undefined
+      }
+
+      if (bloodhoundOptions.remote) {
+        bloodhoundOptions.remote.transform = (response: any) => {
+          console.log('Bloodhound response', response);
+          return response;
+        };
       }
 
       const engine = new Bloodhound(bloodhoundOptions);
