@@ -79,6 +79,10 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
           elements.focus();
         }, 100);
       }
+
+      if (rules.delete) {
+        elements.remove();
+      }
     }
   }
 }
@@ -101,6 +105,7 @@ export interface ElementManipulatorConfig {
     value?: string;
     createElement?: CreateElementConfig | CreateElementConfig[];
     focus?: boolean;
+    delete?: boolean;
   };
 }
 
