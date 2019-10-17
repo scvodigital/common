@@ -53,6 +53,12 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
 
       if (bloodhoundOptions.remote) {
         bloodhoundOptions.remote.transform = (response: any) => {
+          if (!this.textbox.val()) {
+            console.log('Closing tt-menu because no search query')
+            this.element.find('.tt-menu').css('display', 'none');
+            return [];
+          }
+
           if (!Array.isArray(response)) {
             return response;
           }
