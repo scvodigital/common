@@ -1,5 +1,5 @@
 import { BaseComponent } from "./base-component";
-import { DomManipulator, DomManipulatorRules } from '../dom-manipulator';
+import { TaskConfig, TaskRunnerContext, TaskRunner } from "../task-runner/task-runner";
 
 // tslint:disable-next-line: no-implicit-dependencies
 require('imports-loader?define=>false!typeahead.js/dist/typeahead.jquery.min.js');
@@ -67,7 +67,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         this.autocompleted = true;
         this.typeaheadSelect(ev, suggestion);
       })
-      .on('keydown', (ev: any) => {
+      .on('keydown', async (ev: any) => {
         switch (ev.keyCode) {
           case (9):
             if (this.autocompleted) {
@@ -86,7 +86,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         }
         this.autocompleted = false;
       })
-      .on('blur', (ev: any) => {
+      .on('blur', async (ev: any) => {
         if (!this.autocompleted) {
           this.nothingSelected();
         }
@@ -94,38 +94,40 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   }
 
   typeaheadSelect(event: any, suggestion: any) {
-    if (this.config.itemSelectedRules) {
+    if (this.config.itemSelectedTasks) {
       const dataset = this.datasets[suggestion.datasetName] || null;
-      const context = {
-        event,
-        suggestion,
-        dataset,
-        window,
-        $,
-        instance: this
-      };
-      DomManipulator(this.config.itemSelectedRules, this.element, context);
+      const context = new TaskRunnerContext({
+        metadata: {
+          event,
+          suggestion,
+          dataset,
+          instance: this
+        },
+        rootElement: this.element
+      });
+      TaskRunner.run(this.config.itemSelectedTasks, context).then().catch(err => console.error);
     }
   }
 
   nothingSelected() {
     console.log('Nothing selected');
-    if (this.config.nothingSelectedRules && !this.isLocked) {
-      const context = {
-        event,
-        window,
-        $,
-        instance: this
-      };
-      DomManipulator(this.config.nothingSelectedRules, this.element, context);
+    if (this.config.nothingSelectedTasks && !this.isLocked) {
+      const context = new TaskRunnerContext({
+        metadata: {
+          event,
+          instance: this
+        },
+        rootElement: this.element
+      });
+      TaskRunner.run(this.config.nothingSelectedTasks, context).then().catch(err => console.error);
     }
   }
 }
 
 export interface TypeaheadConfig {
   typeaheadOptions?: TypeaheadOptions;
-  itemSelectedRules?: DomManipulatorRules;
-  nothingSelectedRules?: DomManipulatorRules;
+  itemSelectedTasks?: (TaskConfig | string)[];
+  nothingSelectedTasks?: (TaskConfig | string)[];
   datasets: TypeaheadDataset[];
 }
 
