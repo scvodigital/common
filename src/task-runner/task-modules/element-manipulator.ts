@@ -44,11 +44,11 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
         }
       }
 
-      if (typeof rules.contents === 'string') {
+      if (typeof rules.contents !== 'undefined') {
         elements.html(rules.contents);
       }
 
-      if (typeof rules.value === 'string') {
+      if (typeof rules.value !== 'undefined') {
         elements.val(rules.value);
       }
 
