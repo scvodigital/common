@@ -24,7 +24,7 @@ export class Basic<T> {
         __template: selector.trim(),
         __parser: 'string'
       };
-      const ruleContext = JSON.parse(JSON.stringify(context));
+      const ruleContext = Object.assign({}, context) as any;
       ruleContext.currentElement = currentElement;
       selector = await ObjectCompiler.renderer.render(renderConfig, context) as string;
 
