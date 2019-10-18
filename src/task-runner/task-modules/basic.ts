@@ -16,10 +16,18 @@ export class Basic<T> {
     return config;
   }
 
-  selectorResolver(rootElement: JQuery<any>, rules: string) {
+  async selectorResolver(rootElement: JQuery<any>, rules: string, context: TaskRunnerContext) {
     const selectors = rules.split(/\|/g);
     let currentElement = rootElement;
     for (let selector of selectors) {
+      const renderConfig = {
+        __template: selector.trim(),
+        __parser: 'string'
+      };
+      const ruleContext = JSON.parse(JSON.stringify(context));
+      ruleContext.currentElement = currentElement;
+      selector = await ObjectCompiler.renderer.render(renderConfig, context) as string;
+
       selector = selector.trim().replace(/(?:{)([\w-]+)(?:})/g, (_match: string, attribute: string) => {
         const value = currentElement.attr(attribute);
         return value || '';

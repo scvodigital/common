@@ -6,7 +6,7 @@ import { ObjectCompiler } from '../object-compiler';
 
 export class Call extends Basic<CallConfig> {
   async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: CallConfig): Promise<any> {
-    const owner = this.objectResolver(config.owner, context);
+    const owner = await this.objectResolver(config.owner, context);
     const callContext = config.context ? this.objectResolver(config.context, context) : owner;
 
     if (typeof owner[config.functionName] !== 'function') {
@@ -24,7 +24,7 @@ export class Call extends Basic<CallConfig> {
     }
   }
 
-  objectResolver(targetConfig: CallObject | CallElement, context: TaskRunnerContext): any {
+  async objectResolver(targetConfig: CallObject | CallElement, context: TaskRunnerContext): Promise<any> {
     let target: Object|undefined;
     let query = '';
 
@@ -34,7 +34,7 @@ export class Call extends Basic<CallConfig> {
       target = ObjectCompiler.objectPath(targetContext, query);
     } else if (targetConfig.type === 'JQuery' || targetConfig.type === 'HTMLElement') {
       query = targetConfig.selector;
-      const elements = this.selectorResolver(context.rootElement, query);
+      const elements = await this.selectorResolver(context.rootElement, query, context);
 
       if (elements.length > 0) {
         target = targetConfig.type === 'JQuery' ? elements : elements[0];
