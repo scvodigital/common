@@ -75,19 +75,6 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         };
       }
 
-      if (Array.isArray(bloodhoundOptions.local)) {
-        const items = JSON.parse(JSON.stringify(bloodhoundOptions.local));
-        bloodhoundOptions.local = () => {
-          if (!this.textbox.val()) {
-            console.log('Closing tt-menu because no search query');
-            this.element.find('.tt-menu').css('display', 'none');
-            (this.textbox as any).typeahead('val', '');
-            return [];
-          }
-          return items;
-        }
-      }
-
       const engine = new Bloodhound(bloodhoundOptions);
 
       dataset.source = engine;
