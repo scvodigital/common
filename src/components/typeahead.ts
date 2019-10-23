@@ -20,10 +20,6 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
 
-  isLocked(): boolean {
-    return this.element.hasClass('typeahead-locked');
-  }
-
   async init() {
     this.setupTypeahead();
   }
@@ -118,6 +114,9 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
       });
   }
 
+  //TODO? The following two methods are both called in async functions,
+  //      as they call async code should they not also be async.
+  //      Apparently some of the event handlers are async and that works?!
   typeaheadSelect(event: any, suggestion: any) {
     if (this.config.itemSelectedTasks) {
       const dataset = this.datasets[suggestion.datasetName] || null;
@@ -136,7 +135,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
 
   nothingSelected() {
     console.log('Nothing selected');
-    if (this.config.nothingSelectedTasks && !this.isLocked) {
+    if (this.config.nothingSelectedTasks) {
       const context = new TaskRunnerContext({
         metadata: {
           event,
