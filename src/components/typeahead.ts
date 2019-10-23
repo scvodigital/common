@@ -116,8 +116,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   }
 
   clearSelection() {
+    //this.textbox.val('');
     (this.textbox as any).typeahead('val', '');
-    this.textbox.val('');
     this.nothingSelected();
   }
 
