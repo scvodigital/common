@@ -1,3 +1,9 @@
+//TODO: There seems to be a loop issue on the location box.
+//      If you half type a location and click on the page to
+//      lose focus on that box, the clear/close tasks seem to
+//      get stuck in a loop. Gotta work out what is causing
+//      this and how to escape the typeahead process properly
+
 import { BaseComponent } from "./base-component";
 import { TaskConfig, TaskRunnerContext, TaskRunner } from "../task-runner/task-runner";
 
@@ -116,7 +122,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   }
 
   clearSelection() {
-    //this.textbox.val('');
+    this.textbox.val('');
     (this.textbox as any).typeahead('val', '');
     this.nothingSelected();
   }
