@@ -16,6 +16,7 @@ export const BloodhoundTokenizers = {
 export class Typeahead extends BaseComponent<TypeaheadConfig> {
   typeahead: any;
   selectedItem: any;
+  selectedItemDisplay: string|null = null;
   autocompleted: boolean = false;
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
@@ -118,8 +119,21 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   //      as they call async code should they not also be async.
   //      Apparently some of the event handlers are async and that works?!
   typeaheadSelect(event: any, suggestion: any) {
+    this.selectedItem = suggestion;
+    const dataset = this.datasets[suggestion.datasetName] || null;
+    if (dataset && dataset.display && suggestion[dataset.display]) {
+      this.selectedItemDisplay = suggestion[dataset.display];
+    } else {
+      for (const [key, value] of Object.entries(suggestion)) {
+        if (key !== 'datasetName' && typeof value === 'string') {
+          this.selectedItemDisplay = value;
+          break;
+        }
+      }
+    }
+    console.log('Selected item', this.selectedItemDisplay, this.selectedItem);
+
     if (this.config.itemSelectedTasks) {
-      const dataset = this.datasets[suggestion.datasetName] || null;
       const context = new TaskRunnerContext({
         metadata: {
           event,
@@ -134,6 +148,11 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   }
 
   nothingSelected() {
+    if (this.selectedItemDisplay === this.textbox.val()) {
+      console.log(`Nothing selected but value in input '${this.textbox.val()}' is the same as the last selected item '${this.selectedItemDisplay}' so returning`);
+      return;
+    }
+
     console.log('Nothing selected');
     if (this.config.nothingSelectedTasks) {
       const context = new TaskRunnerContext({
