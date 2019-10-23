@@ -52,8 +52,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         bloodhoundOptions.remote.transform = (response: any) => {
           if (!this.textbox.val()) {
             console.log('Closing tt-menu because no search query');
-            this.element.find('.tt-menu').css('display', 'none');
-            (this.textbox as any).typeahead('val', '');
+            this.clearSelection();
+            this.closeAutocomplete();
             return [];
           }
 
@@ -113,6 +113,17 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           this.nothingSelected();
         }
       });
+  }
+
+  clearSelection() {
+    (this.textbox as any).typeahead('val', '');
+    this.textbox.val('');
+    this.nothingSelected();
+  }
+
+  closeAutocomplete() {
+    (this.textbox as any).typeahead('close');
+    this.element.find('.tt-menu').css('display', 'none');
   }
 
   //TODO? The following two methods are both called in async functions,
