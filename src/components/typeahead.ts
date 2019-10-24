@@ -96,6 +96,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         this.typeaheadSelect(ev, suggestion);
       })
       .on('keydown', async (ev: any) => {
+        this.exitStarted = false;
         switch (ev.keyCode) {
           case (9):
             if (this.autocompleted) {
@@ -115,7 +116,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         this.autocompleted = false;
       })
       .on('blur', async (ev: any) => {
-        if (!this.autocompleted) {
+        if (!this.autocompleted && !this.exitStarted) {
           this.nothingSelected();
         }
       });
@@ -164,11 +165,19 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
     }
   }
 
+  exitStarted = false;
   nothingSelected() {
     if (this.selectedItemDisplay === this.textbox.val()) {
       console.log(`Nothing selected but value in input '${this.textbox.val()}' is the same as the last selected item '${this.selectedItemDisplay}' so returning`);
       return;
     }
+
+    if (this.exitStarted) {
+      console.log(`Exit process has started, don't want to get stuck in a loop!`);
+      return;
+    }
+
+    this.exitStarted = true;
 
     console.log('Nothing selected');
     if (this.config.nothingSelectedTasks) {
