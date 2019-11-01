@@ -1,0 +1,59 @@
+{
+  "name": "@scvo/common",
+  "version": "0.0.1",
+  "description": "Common JS components, CSS, and Templates used across our sites",
+  "main": "build/component-manager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf build/**",
+    "build": "npm run clean && webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scvodigital/common.git"
+  },
+  "author": "Matthew Wilkes (SCVO)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/scvodigital/common/issues"
+  },
+  "homepage": "https://github.com/scvodigital/common#readme",
+  "devDependencies": {
+    "@types/jquery": "^3.3.30",
+    "@types/leaflet": "^1.4.7",
+    "@types/leaflet-markercluster": "^1.0.3",
+    "@types/node": "^12.6.2",
+    "awesome-typescript-loader": "^5.2.1",
+    "compression-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^3.0.0",
+    "expose-loader": "^0.7.5",
+    "file-loader": "^4.1.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "imports-loader": "^0.8.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.0",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.18.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.5.3",
+    "url-loader": "^2.0.1",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "dependencies": {
+    "bristles": "0.0.15",
+    "firebase": "^7.0.0",
+    "jquery": "^3.4.1",
+    "json-6": "^1.0.2",
+    "json-logic-js": "^1.2.2",
+    "leaflet": "^1.5.1",
+    "leaflet.markercluster": "^1.4.1",
+    "mapbox.js": "^3.2.0",
+    "typeahead.js": "^0.11.1"
+  }
+}
