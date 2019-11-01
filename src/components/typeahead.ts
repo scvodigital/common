@@ -1,5 +1,5 @@
 import { BaseComponent } from "./base-component";
-import { DomManipulator, DomManipulatorRules } from '../dom-manipulator';
+import { TaskConfig, TaskRunnerContext, TaskRunner } from "../task-runner/task-runner";
 
 // tslint:disable-next-line: no-implicit-dependencies
 require('imports-loader?define=>false!typeahead.js/dist/typeahead.jquery.min.js');
@@ -16,13 +16,10 @@ export const BloodhoundTokenizers = {
 export class Typeahead extends BaseComponent<TypeaheadConfig> {
   typeahead: any;
   selectedItem: any;
+  selectedItemDisplay: string|null = null;
   autocompleted: boolean = false;
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
-
-  isLocked(): boolean {
-    return this.element.hasClass('typeahead-locked');
-  }
 
   async init() {
     this.setupTypeahead();
@@ -37,17 +34,42 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           item.datasetName = dataset.name;
         }
       }
+
       const datumTokenizerField = dataset.bloodhound.datumTokenizerField;
       const bloodhoundOptions: any = {
         datumTokenizer: datumTokenizerField ?
-          BloodhoundTokenizers[dataset.bloodhound.datumTokenizer](datumTokenizerField) :
-          BloodhoundTokenizers[dataset.bloodhound.datumTokenizer],
+        BloodhoundTokenizers[dataset.bloodhound.datumTokenizer](datumTokenizerField) :
+        BloodhoundTokenizers[dataset.bloodhound.datumTokenizer],
         queryTokenizer: BloodhoundTokenizers[dataset.bloodhound.queryTokenizer],
         local: dataset.bloodhound.local ? dataset.bloodhound.local.filter(Boolean) : [],
         initialize: dataset.bloodhound.hasOwnProperty('initialize') ? dataset.bloodhound.initialize : true,
         sufficient: dataset.bloodhound.sufficient || 5,
         prefetch: dataset.bloodhound.prefetch || undefined,
         remote: dataset.bloodhound.remote || undefined
+      }
+
+      if (bloodhoundOptions.remote) {
+        bloodhoundOptions.remote.transform = (response: any) => {
+          if (!this.textbox.val()) {
+            console.log('Closing tt-menu because no search query');
+            this.clearSelection();
+            this.closeAutocomplete();
+            return [];
+          }
+
+          if (!Array.isArray(response)) {
+            return response;
+          }
+
+          for (let item of response) {
+            if (typeof item !== 'object') {
+              item = { value: item };
+            }
+            item.datasetName = dataset.name;
+          }
+
+          return response;
+        };
       }
 
       const engine = new Bloodhound(bloodhoundOptions);
@@ -67,7 +89,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         this.autocompleted = true;
         this.typeaheadSelect(ev, suggestion);
       })
-      .on('keydown', (ev: any) => {
+      .on('keydown', async (ev: any) => {
+        this.exitStarted = false;
         switch (ev.keyCode) {
           case (9):
             if (this.autocompleted) {
@@ -86,46 +109,88 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
         }
         this.autocompleted = false;
       })
-      .on('blur', (ev: any) => {
-        if (!this.autocompleted) {
+      .on('blur', async (ev: any) => {
+        if (!this.autocompleted && !this.exitStarted) {
           this.nothingSelected();
         }
       });
   }
 
+  clearSelection() {
+    this.textbox.val('');
+    (this.textbox as any).typeahead('val', '');
+    this.nothingSelected();
+  }
+
+  closeAutocomplete() {
+    (this.textbox as any).typeahead('close');
+    this.element.find('.tt-menu').css('display', 'none');
+  }
+
+  //TODO? The following two methods are both called in async functions,
+  //      as they call async code should they not also be async.
+  //      Apparently some of the event handlers are async and that works?!
   typeaheadSelect(event: any, suggestion: any) {
-    if (this.config.itemSelectedRules) {
-      const dataset = this.datasets[suggestion.datasetName] || null;
-      const context = {
-        event,
-        suggestion,
-        dataset,
-        window,
-        $,
-        instance: this
-      };
-      DomManipulator(this.config.itemSelectedRules, this.element, context);
+    this.selectedItem = suggestion;
+    const dataset = this.datasets[suggestion.datasetName] || null;
+    if (dataset && dataset.display && suggestion[dataset.display]) {
+      this.selectedItemDisplay = suggestion[dataset.display];
+    } else {
+      for (const [key, value] of Object.entries(suggestion)) {
+        if (key !== 'datasetName' && typeof value === 'string') {
+          this.selectedItemDisplay = value;
+          break;
+        }
+      }
+    }
+    console.log('Selected item', this.selectedItemDisplay, this.selectedItem);
+
+    if (this.config.itemSelectedTasks) {
+      const context = new TaskRunnerContext({
+        metadata: {
+          event,
+          suggestion,
+          dataset,
+          instance: this
+        },
+        rootElement: this.element
+      });
+      TaskRunner.run(this.config.itemSelectedTasks, context).then().catch(err => console.error);
     }
   }
 
+  exitStarted = false;
   nothingSelected() {
+    if (this.selectedItemDisplay === this.textbox.val()) {
+      console.log(`Nothing selected but value in input '${this.textbox.val()}' is the same as the last selected item '${this.selectedItemDisplay}' so returning`);
+      return;
+    }
+
+    if (this.exitStarted) {
+      console.log(`Exit process has started, don't want to get stuck in a loop!`);
+      return;
+    }
+
+    this.exitStarted = true;
+
     console.log('Nothing selected');
-    if (this.config.nothingSelectedRules && !this.isLocked) {
-      const context = {
-        event,
-        window,
-        $,
-        instance: this
-      };
-      DomManipulator(this.config.nothingSelectedRules, this.element, context);
+    if (this.config.nothingSelectedTasks) {
+      const context = new TaskRunnerContext({
+        metadata: {
+          event,
+          instance: this
+        },
+        rootElement: this.element
+      });
+      TaskRunner.run(this.config.nothingSelectedTasks, context).then().catch(err => console.error);
     }
   }
 }
 
 export interface TypeaheadConfig {
   typeaheadOptions?: TypeaheadOptions;
-  itemSelectedRules?: DomManipulatorRules;
-  nothingSelectedRules?: DomManipulatorRules;
+  itemSelectedTasks?: (TaskConfig | string)[];
+  nothingSelectedTasks?: (TaskConfig | string)[];
   datasets: TypeaheadDataset[];
 }
 

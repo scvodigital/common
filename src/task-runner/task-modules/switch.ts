@@ -3,19 +3,26 @@ import { TaskRunner, TaskRunnerContext, TaskConfig } from '../task-runner';
 import { RenderConfig } from '../renderer';
 
 export class Switch extends Basic<SwitchConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: SwitchConfig, root: JQuery<HTMLElement>): Promise<any> {
-    if (!config.branches.hasOwnProperty(config.which)) {
-      throw Error(`No branch '${config.which} exists`);
-    }
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: SwitchConfig): Promise<any> {
+    let branch: Branch|undefined;
 
-    const branch = config.branches[config.which];
+    if (config.branches.hasOwnProperty(config.which)) {
+      branch = config.branches[config.which];
+    } else if (config.branches.default) {
+      branch = config.branches.default;
+    } else {
+      throw new Error(`No branch called '${config.which}' or 'default' exists`);
+    }
 
     let output: any;
     if (branch.tasks) {
-      output = await TaskRunner.run(branch.tasks, context, root, branch.renderOutput);
+      output = await TaskRunner.run(branch.tasks, context, branch.renderOutput);
     }
 
     if (branch.halt) {
+      if (!output) {
+        output = {};
+      }
       output.__halt = true;
     }
 
@@ -25,7 +32,10 @@ export class Switch extends Basic<SwitchConfig> {
 
 export interface SwitchConfig {
   which: string;
-  branches: { [branchName: string]: Branch }
+  branches: {
+    default: Branch;
+    [branchName: string]: Branch
+  }
 }
 
 export interface Branch {

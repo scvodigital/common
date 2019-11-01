@@ -1,35 +1,34 @@
 import { BaseComponent } from './components/base-component';
 
-import { AjaxForm } from './components/ajax-form';
-import { DomManipulatorTrigger } from './components/dom-manipulator-trigger';
 import { LeafletMap } from './components/leaflet-map';
-import { MultiSelect } from './components/multi-select';
-import { RemoteContent } from './components/remote-content';
 import { Typeahead } from './components/typeahead';
 import { TasksTrigger } from './components/tasks-trigger';
+import { TaskRunner } from './task-runner/task-runner';
+import { Bristles } from 'bristles';
 
-require('material-design-lite');
 require('./components.scss');
 
 export class ComponentManager {
   components: { [name: string]: any } = {
-    AjaxForm,
-    DomManipulatorTrigger,
     LeafletMap,
-    MultiSelect,
-    RemoteContent,
     Typeahead,
     TasksTrigger
   };
   componentRegistry: ComponentRegistry = {};
   clock = window.requestAnimationFrame(this.tick.bind(this));
 
+  private updateRequested = false;
+  requestUpdate() {
+    this.updateRequested = true;
+  }
+
   constructor() {
     this.requestUpdate();
   }
 
   async registerComponents() {
-    componentHandler.upgradeDom();
+    await this.unregisterComponents();
+
     const componentElements = Array.from($('[data-component]')).map(item => $(item));
     for (const componentElement of componentElements) {
       const typeNames = componentElement.data('component') || '';
@@ -45,28 +44,6 @@ export class ComponentManager {
         this.componentRegistry[component.uid] = component;
       }
     }
-    componentHandler.upgradeDom();
-  }
-
-  mdlSelectorComponentMap = {
-    '.mdl-js-button': 'MaterialButton',
-    '.mdl-js-checkbox': 'MaterialCheckbox',
-    '.mdl-js-data-table  ': 'MaterialDataTable',
-    '.mdl-js-icon-toggle': 'MaterialIconToggle',
-    '.mdl-js-layout': 'MaterialLayout',
-    '.mdl-js-menu': 'MaterialMenu',
-    '.mdl-js-progress': 'MaterialProgress',
-    '.mdl-js-radio': 'MaterialRadio',
-    '.mdl-js-slider': 'MaterialSlider',
-    '.mdl-js-snackbar': 'MaterialSnackbar',
-    '.mdl-js-spinner': 'MaterialSpinner',
-    '.mdl-js-switch': 'MaterialSwitch',
-    '.mdl-js-ripple-effect': 'MaterialRipple',
-    '.mdl-js-tabs': 'MaterialTabs',
-    '.mdl-tabs__tab': 'MaterialTab',
-    '.mdl-layout__tab': 'MaterialLayoutTab',
-    '.mdl-js-textfield': 'MaterialTextfield',
-    '.mdl-tooltip': 'MaterialTooltip'
   }
 
   async unregisterComponents() {
@@ -74,20 +51,6 @@ export class ComponentManager {
       await component.destroy();
     }
     this.componentRegistry = {};
-
-    for (const [selector, componentName] of Object.entries(this.mdlSelectorComponentMap)) {
-      const elements = $(selector);
-      elements.each((index, element) => {
-        if (element.hasOwnProperty(componentName)) {
-          componentHandler.downgradeElements(element);
-        }
-      });
-    }
-  }
-
-  private updateRequested = false;
-  requestUpdate() {
-    this.updateRequested = true;
   }
 
   async tick() {
@@ -109,5 +72,7 @@ export interface ComponentRegistry {
 (() => {
   window.addEventListener('DOMContentLoaded', () => {
     (window as any).ComponentManager = new ComponentManager();
+    (window as any).TaskRunner = TaskRunner;
+    (window as any).Bristles = Bristles;
   });
 })();

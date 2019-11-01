@@ -25,6 +25,8 @@ export class ObjectCompiler {
       output = await ObjectCompiler.compileProperty(output, context);
     }
 
+    console.log('ObjectCompiler compiled', config, 'into', output);
+
     return output;
   }
 
@@ -44,7 +46,7 @@ export class ObjectCompiler {
       return compiled;
     }
 
-    if (typeof resolvedProperty === 'object' && resolvedProperty !== null) {
+    if (typeof resolvedProperty === 'object' && resolvedProperty !== null && !resolvedProperty.hasOwnProperty('__doNotCompile')) {
       const output: any = {};
       for (const [key, value] of Object.entries(resolvedProperty)) {
         output[key] = await ObjectCompiler.compileProperty(value, context);

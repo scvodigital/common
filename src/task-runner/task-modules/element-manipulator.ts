@@ -2,24 +2,9 @@ import { Basic } from './basic';
 import { TaskRunnerContext, TaskConfig } from '../task-runner';
 
 export class ElementManipulator extends Basic<ElementManipulatorConfig> {
-  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: ElementManipulatorConfig, root: JQuery<HTMLElement>): Promise<any> {
+  async main(context: TaskRunnerContext, taskConfig: TaskConfig, config: ElementManipulatorConfig): Promise<any> {
     for (const [selector, rules] of Object.entries(config)) {
-      let elements: JQuery<HTMLElement> | undefined;
-      if (root) {
-        elements =
-          selector === '>' ? root :
-          selector.startsWith('>') ? root.find(selector.substr(1)) :
-          selector === '<' ? root.parent() :
-          selector.startsWith('<') ? root.parents(selector.substr(1)) :
-          $(selector);
-      } else {
-        elements =
-          selector === '>' ? $('body') :
-          selector.startsWith('>') ? $(selector.substr(1)) :
-          selector === '<' ? $('head') :
-          selector.startsWith('<') ? $('head ' + selector.substr(1)) :
-          $(selector);
-      }
+      const elements = await this.selectorResolver(context.rootElement, selector, context);
 
       if (rules.addClass) {
         elements.addClass(rules.addClass);
@@ -59,8 +44,12 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
         }
       }
 
-      if (typeof rules.contents === 'string') {
+      if (typeof rules.contents !== 'undefined') {
         elements.html(rules.contents);
+      }
+
+      if (typeof rules.value !== 'undefined') {
+        elements.val(rules.value);
       }
 
       if (rules.createElement) {
@@ -84,6 +73,16 @@ export class ElementManipulator extends Basic<ElementManipulatorConfig> {
           }
         }
       }
+
+      if (rules.focus) {
+        setTimeout(() => {
+          elements.focus();
+        }, 100);
+      }
+
+      if (rules.delete) {
+        elements.remove();
+      }
     }
   }
 }
@@ -103,7 +102,10 @@ export interface ElementManipulatorConfig {
       [key: string]: any;
     }
     contents?: string;
+    value?: string;
     createElement?: CreateElementConfig | CreateElementConfig[];
+    focus?: boolean;
+    delete?: boolean;
   };
 }
 
