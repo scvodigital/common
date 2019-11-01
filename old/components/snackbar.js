@@ -4,14 +4,14 @@ export class SnackbarComponent {
   constructor(themes) {
     this.themes = themes;
     this.$snackbar = $('<div>')
-      .addClass('mdc-snackbar mdc-elevation--z10')
+      .addClass('mdc-snackbar')
       .attr('id', 'app-snackbar')
       .appendTo('body');
     this.$snackbarSurface = $('<div>')
       .addClass('mdc-snackbar__surface')
       .appendTo(this.$snackbar);
     this.$snackbarLabel = $('<div>')
-      .addClass('mdc-snackbar__label')
+      .addClass('mdc-snackbar__label mdc-elevation--z10')
       .attr({ 'role': 'status', 'aria-live': 'polite' })
       .appendTo(this.$snackbarSurface);
     this.$snackbarActions = $('<div>')
