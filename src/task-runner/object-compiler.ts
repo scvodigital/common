@@ -9,7 +9,7 @@ export class ObjectCompiler {
   }
 
   static async compile(config: any, context: TaskRunnerContext, specialProperties?: string[]): Promise<any> {
-    if (typeof config !== 'object') {
+    if (typeof config !== 'object' || config === null) {
       return config;
     }
 
