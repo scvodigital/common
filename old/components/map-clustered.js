@@ -24,7 +24,7 @@ export class MapClusteredComponent {
             trackResize: false
         }).setView([initialLat, initialLng], initialZoom);
         var osmAttrib = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
-        L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+        L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: osmAttrib,
             minZoom: 5,
             maxZoom: 17,
