@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^4.2.0",
-    "bristles": "0.0.18",
+    "bristles": "0.0.19",
     "firebase": "^7.0.0",
     "jquery": "^3.4.1",
     "json-6": "^1.0.2",
