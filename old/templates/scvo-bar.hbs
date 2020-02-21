@@ -16,9 +16,9 @@
       <li>
         <a class="text-link" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{/unless}}/scottish-charity-awards" title="Scottish Charity Awards - Celebrating the amazing work that people within charities and community groups do every day">Scottish Charity Awards</a>
       </li>
-      <li>
+      {{!-- <li>
         <a class="text-link" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{/unless}}/the-gathering-2020" title="The Gathering - Scotland's largest event for charities, social enterprises and voluntary organisations">The Gathering</a>
-      </li>
+      </li> --}}
       <li>
         <a class="pull-right brand-logo no-ext no-underline" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.org{{else}}/{{/unless}}" title="Scottish Council for Voluntary Organisations">
           <img src="{{~>asset_url url='images/logos/scvo-secondary.svg'}}" />
