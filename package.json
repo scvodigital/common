@@ -1,6 +1,6 @@
 {
   "name": "@scvo/common",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Common JS components, CSS, and Templates used across our sites",
   "main": "build/component-manager.js",
   "scripts": {
