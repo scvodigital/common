@@ -41,10 +41,10 @@ export class MapComponent {
     }).setView([initialLat, initialLng], initialZoom);
     var osmAttrib = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
     L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: osmAttrib,
-      minZoom: 6,
-      maxZoom: 18,
-      opacity: 0.8
+        attribution: osmAttrib,
+        minZoom: 5,
+        maxZoom: 17,
+        opacity: 0.9
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
 
