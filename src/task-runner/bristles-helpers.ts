@@ -29,7 +29,7 @@ export class BristlesHelpers {
 
       return returnVal[property];
     } catch (err) {
-      console.error('Bristles Error -> Helper: if, Error:', err.message);
+      console.error('Bristles Error -> Helper: jquery, Error:', err.message);
       return null;
     }
   }
