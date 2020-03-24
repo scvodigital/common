@@ -37,7 +37,7 @@ elif [ $LOCAL = $REMOTE ]; then
   echo -e "${PINK}STEP 7 of 7: Navigating back to 'development'${NC}"
   git checkout development
   echo -e "${PINK}FINISHED LOCAL DEPLOYMENT TASKS${NC}"
-  echo -e "${PINK}Navigate to https://travis-ci.org/scvodigital/$REPO to watch your deployment in the cloud!${NC}"
+  echo -e "${PINK}Navigate to https://travis-ci.com/github/scvodigital/$REPO to watch your deployment in the cloud!${NC}"
 elif [ $LOCAL = $BASE ]; then
   echo -e "${RED}CANNOT DEPLOY: Need to pull${NC}"
 elif [ $REMOTE = $BASE ]; then
