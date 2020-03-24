@@ -21,7 +21,7 @@ elif [ $LOCAL = $REMOTE ]; then
   sed -i.bak '/before_install:/,/install:/{//p;d;}' .travis.yml
   rm .travis.yml.bak
   echo -e "${PINK}STEP 2 of 7: Encrypting secret.json${NC}"
-  travis encrypt-file secret.json --add --force
+  travis encrypt-file secret.json --add --force --pro
   echo -e "${PINK}STEP 3 of 7: Committing encrypted secret and updated Travis config to Git${NC}"
   git add secret.json.enc .travis.yml
   git commit -m "Updated secret.json"
