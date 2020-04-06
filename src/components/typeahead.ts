@@ -20,8 +20,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   autocompleted: boolean = false;
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
-  currentLocalData = [];
-  currentRemoteData = [];
+  currentLocalData: any[] = [];
+  currentRemoteData: any[] = [];
 
   async init() {
     this.setupTypeahead();
