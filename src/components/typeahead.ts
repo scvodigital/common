@@ -20,6 +20,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   autocompleted: boolean = false;
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
+  currentLocalData = [];
+  currentRemoteData = [];
 
   async init() {
     this.setupTypeahead();
@@ -54,10 +56,12 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
             console.log('Closing tt-menu because no search query');
             this.clearSelection();
             this.closeAutocomplete();
+            this.currentRemoteData = [];
             return [];
           }
 
           if (!Array.isArray(response)) {
+            this.currentRemoteData = [];
             return response;
           }
 
@@ -68,6 +72,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
             item.datasetName = dataset.name;
           }
 
+          this.currentRemoteData = response;
           return response;
         };
       }
