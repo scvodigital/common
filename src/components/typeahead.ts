@@ -128,6 +128,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
     this.textbox.val('');
     (this.textbox as any).typeahead('val', '');
     this.nothingSelected();
+    this.currentLocalData = [];
+    this.currentRemoteData = [];
   }
 
   closeAutocomplete() {
@@ -159,7 +161,9 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           event,
           suggestion,
           dataset,
-          instance: this
+          instance: this,
+          currentLocalData: this.currentLocalData,
+          currentRemoteData: this.currentRemoteData
         },
         rootElement: this.element
       });
@@ -186,12 +190,17 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
       const context = new TaskRunnerContext({
         metadata: {
           event,
-          instance: this
+          instance: this,
+          currentLocalData: this.currentLocalData,
+          currentRemoteData: this.currentRemoteData
         },
         rootElement: this.element
       });
       TaskRunner.run(this.config.nothingSelectedTasks, context).then().catch(err => console.error);
     }
+
+    this.currentLocalData = [];
+    this.currentRemoteData = [];
   }
 }
 
