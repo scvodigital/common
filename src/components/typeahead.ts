@@ -13,6 +13,9 @@ export const BloodhoundTokenizers = {
   objWhitespace: Bloodhound.tokenizers.obj.whitespace
 }
 
+//TODO: This builds but is throwing JS errors on coronavirus
+//      All I've added are props for current data and am setting it in Bloodhound remote transform method
+
 export class Typeahead extends BaseComponent<TypeaheadConfig> {
   typeahead: any;
   selectedItem: any;
