@@ -13,6 +13,9 @@ export const BloodhoundTokenizers = {
   objWhitespace: Bloodhound.tokenizers.obj.whitespace
 }
 
+//TODO: This builds but is throwing JS errors on coronavirus
+//      All I've added are props for current data and am setting it in Bloodhound remote transform method
+
 export class Typeahead extends BaseComponent<TypeaheadConfig> {
   typeahead: any;
   selectedItem: any;
@@ -20,6 +23,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
   autocompleted: boolean = false;
   datasets: { [name: string]: TypeaheadDataset } = {};
   textbox = this.element.find('input');
+  currentLocalData: any[] = [];
+  currentRemoteData: any[] = [];
 
   async init() {
     this.setupTypeahead();
@@ -54,10 +59,12 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
             console.log('Closing tt-menu because no search query');
             this.clearSelection();
             this.closeAutocomplete();
+            this.currentRemoteData = [];
             return [];
           }
 
           if (!Array.isArray(response)) {
+            this.currentRemoteData = [];
             return response;
           }
 
@@ -68,6 +75,7 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
             item.datasetName = dataset.name;
           }
 
+          this.currentRemoteData = response;
           return response;
         };
       }
@@ -120,6 +128,8 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
     this.textbox.val('');
     (this.textbox as any).typeahead('val', '');
     this.nothingSelected();
+    this.currentLocalData = [];
+    this.currentRemoteData = [];
   }
 
   closeAutocomplete() {
@@ -151,7 +161,9 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
           event,
           suggestion,
           dataset,
-          instance: this
+          instance: this,
+          currentLocalData: this.currentLocalData,
+          currentRemoteData: this.currentRemoteData
         },
         rootElement: this.element
       });
@@ -178,12 +190,17 @@ export class Typeahead extends BaseComponent<TypeaheadConfig> {
       const context = new TaskRunnerContext({
         metadata: {
           event,
-          instance: this
+          instance: this,
+          currentLocalData: this.currentLocalData,
+          currentRemoteData: this.currentRemoteData
         },
         rootElement: this.element
       });
       TaskRunner.run(this.config.nothingSelectedTasks, context).then().catch(err => console.error);
     }
+
+    this.currentLocalData = [];
+    this.currentRemoteData = [];
   }
 }
 

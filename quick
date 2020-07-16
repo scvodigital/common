@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+npm run build
+git add .
+git commit -m "$2"
+git push
+cd "../$1"
+npm i --save-dev https://github.com/scvodigital/common.git
+cd ../common
