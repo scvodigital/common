@@ -34,6 +34,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
 
   async init() {
     try {
+      this.element.attr('data-form-backup-id', this.uid);
       await this.anonymousSignIn();
       this.element.on('change', this.formChange.bind(this));
     } catch(err) {
@@ -51,20 +52,53 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
   }
 
   async formChange(evt: JQuery.Event) {
-    if (!this.canBackup) return;
-    const formData = this.element.serializeArray().map((item) => {
-      if (this.config.ignoreFields.includes(item.name)) {
-        item.value = '[REDACTED]';
+    try {
+      if (!this.canBackup) {
+        console.log(`${this.prefix} Can't backup form. Either couldn't authenticate or there is no data in the ID field`)
+        return;
+      };
+      const formData = this.element.serializeArray().map((item: any) => {
+        if (this.config.ignoreFields.includes(item.name)) {
+          item.value = '[REDACTED]';
+        }
+        item.label = this.findLabel(item.name);
+        item.name = item.name.replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
+        return item;
+      });
+      const backup = {
+        updated: new Date().toISOString(),
+        valid: (this.element[0] as HTMLFormElement).checkValidity(),
+        data: formData
+      };
+      await Firebase.database().ref(this.path).set(backup);
+      console.log(`${this.prefix} Backed up`, backup);
+    } catch(err) {
+      console.error(`${this.prefix} Error backing up form: ${err.message}`);
+    }
+  }
+
+  findLabel(name: string) {
+    try {
+      let labelElement: null | JQuery<HTMLElement> = null;
+
+      const element = $(`[data-form-backup-id="${this.uid}"] [name="${name}"]`);
+      if (element.length === 0) return '';
+
+      const id = element.attr('id');
+      if (id) {
+        labelElement = $(`[data-form-backup-id="${this.uid}"] label[for="${id}"]`);
       }
-      item.name = item.name.replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
-      return item;
-    });
-    const backup = {
-      updated: new Date().toISOString(),
-      valid: (this.element[0] as HTMLFormElement).checkValidity(),
-      data: formData
-    };
-    await Firebase.database().ref(this.path).set(backup);
+
+      if (!labelElement || labelElement.length === 0) {
+        labelElement = $(element).parents('label');
+      }
+
+      const label = labelElement.text();
+      return label;
+    } catch(err) {
+      console.error(`${this.prefix} Error finding label for '${name}': ${err.message}`);
+    }
+    return '';
   }
 }
 
