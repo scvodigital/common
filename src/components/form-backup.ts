@@ -17,8 +17,8 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
   get id() {
     const idFieldsSelectors = this.config.idFields.map((idField) => `input[name="${idField}"]`);
     const idFieldsSelector = idFieldsSelectors.join(',');
-    const idFields: HTMLInputElement[] = Array.from(this.form[0].querySelectorAll(idFieldsSelector));
-    const ids = idFields.map((element) => $(element).val());
+    const idFields = this.element.find(idFieldsSelector);
+    const ids = idFields.map((index, element) => $(element).val()).toArray();
     const id = ids.join('-').replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
     return id;
   }
@@ -28,18 +28,16 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     return `/form_backups/${this.config.name}/${this.id}/${this.timestamp}/${uid}`;
   }
   timestamp: string;
-  form: JQuery<HTMLFormElement>;
 
   constructor(element: Element | JQuery<HTMLElement>, componentManager: ComponentManager) {
     super(element, componentManager);
-    this.form = $(element) as JQuery<HTMLFormElement>;
     this.timestamp = new Date().toISOString().replace(/[^0-9]/g, '-').slice(0, -1);
   }
 
   async init() {
     try {
       await this.anonymousSignIn();
-      this.form.on('change', this.formChange.bind(this));
+      this.element.on('change', this.formChange.bind(this));
     } catch(err) {
       console.error(`${this.prefix} Init error: ${err.message}`);
     }
@@ -56,7 +54,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
 
   async formChange(evt: JQuery.Event) {
     if (!this.canBackup) return;
-    const formData = this.form.serializeArray().map((item) => {
+    const formData = this.element.serializeArray().map((item) => {
       if (this.config.ignoreFields.includes(item.name)) {
         item.value = '[REDACTED]';
       }
@@ -65,7 +63,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     });
     const backup = {
       updated: new Date().toISOString(),
-      valid: this.form[0].checkValidity(),
+      valid: (this.element[0] as HTMLFormElement).checkValidity(),
       data: formData
     };
     await Firebase.database().ref(this.path).set(backup);
