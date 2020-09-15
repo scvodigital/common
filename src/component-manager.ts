@@ -4,6 +4,7 @@ import { LeafletMap } from './components/leaflet-map';
 import { Typeahead } from './components/typeahead';
 import { TasksTrigger } from './components/tasks-trigger';
 import { TaskRunner } from './task-runner/task-runner';
+import { FormBackup } from './components/form-backup';
 import { Bristles } from 'bristles';
 
 require('./components.scss');
@@ -12,7 +13,8 @@ export class ComponentManager {
   components: { [name: string]: any } = {
     LeafletMap,
     Typeahead,
-    TasksTrigger
+    TasksTrigger,
+    FormBackup
   };
   componentRegistry: ComponentRegistry = {};
   clock = window.requestAnimationFrame(this.tick.bind(this));
