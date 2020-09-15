@@ -15,10 +15,10 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     return `FormBackup [${this.config.name}] ->`;
   }
   get id() {
-    const idFieldsSelectors = this.config.idFields.map((idField) => `[name="${idField}"]`);
+    const idFieldsSelectors = this.config.idFields.map((idField) => `input[name="${idField}"]`);
     const idFieldsSelector = idFieldsSelectors.join(',');
-    const idFields = this.form.find(idFieldsSelector);
-    const ids = idFields.map((index, element) => $(element).val()).toArray();
+    const idFields: HTMLInputElement[] = Array.from(this.form[0].querySelectorAll(idFieldsSelector));
+    const ids = idFields.map((element) => $(element).val());
     const id = ids.join('-').replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
     return id;
   }
