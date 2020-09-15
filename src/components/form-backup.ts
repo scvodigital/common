@@ -42,6 +42,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     try {
       this.element.attr('data-form-backup-id', this.uid);
       await this.anonymousSignIn();
+      this.restore();
       this.element.on('change', this.formChange.bind(this));
     } catch(err) {
       console.error(`${this.prefix} Init error: ${err.message}`);
