@@ -93,8 +93,8 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         labelElement = $(element).parents('label');
       }
 
-      const label = labelElement.text();
-      return label;
+      const label = labelElement.text().replace(/[\r\n]/g, ' ').replace(/\s{2,}/g, ' ');
+      return label.trim();
     } catch(err) {
       console.error(`${this.prefix} Error finding label for '${name}': ${err.message}`);
     }
