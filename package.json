@@ -52,7 +52,7 @@
     "@google-cloud/storage": "^4.2.0",
     "bristles": "0.0.24",
     "firebase": "^7.0.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-deserialize": "^2.0.0-rc1",
     "json-6": "^1.0.2",
     "json-logic-js": "^1.2.2",
