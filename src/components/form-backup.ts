@@ -58,7 +58,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         return;
       };
       const formData = this.element.serializeArray().map((item: any) => {
-        if (this.config.ignoreFields.includes(item.name)) {
+        if (this.config.ignoreFields.includes(item.name) && item.value) {
           item.value = '[REDACTED]';
         }
         item.label = this.findLabel(item.name);
