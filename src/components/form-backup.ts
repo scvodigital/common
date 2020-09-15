@@ -15,10 +15,8 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     return `FormBackup [${this.config.name}] ->`;
   }
   get id() {
-    const idFieldsSelectors = this.config.idFields.map((idField) => `input[name="${idField}"]`);
-    const idFieldsSelector = idFieldsSelectors.join(',');
-    const idFields = this.element.find(idFieldsSelector);
-    const ids = idFields.map((index, element) => $(element).val()).toArray();
+    const idFields = $(this.config.idsSelector).toArray();
+    const ids = idFields.map((element) => $(element).val());
     const id = ids.join('-').replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
     return id;
   }
@@ -72,6 +70,6 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
 
 export interface FormBackupConfig {
   name: string;
-  idFields: string[];
+  idsSelector: string;
   ignoreFields: string[];
 }
