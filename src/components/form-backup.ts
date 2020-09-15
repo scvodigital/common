@@ -84,7 +84,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         return item;
       });
       const restoreUrl = new URL(window.location.href);
-      restoreUrl.hash = this.element.serialize();
+      restoreUrl.hash = this.restorePrefix.substring(1) + this.element.serialize();
       const backup = {
         updated: new Date().toISOString(),
         valid: (this.element[0] as HTMLFormElement).checkValidity(),
