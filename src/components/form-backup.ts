@@ -1,6 +1,9 @@
 import { BaseComponent } from './base-component';
 import { ComponentManager } from '../component-manager';
 
+// tslint:disable-next-line: no-import-side-effect
+import 'jquery-deserialize';
+
 import * as Firebase from 'firebase/app';
 // tslint:disable-next-line: no-import-side-effect
 import 'firebase/auth';
@@ -13,6 +16,9 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
   }
   get prefix() {
     return `FormBackup [${this.config.name}] ->`;
+  }
+  get restorePrefix() {
+    return '#restore:';
   }
   get id() {
     const idFields = $(this.config.idsSelector).toArray();
@@ -42,6 +48,17 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     }
   }
 
+  restore() {
+    try {
+      if (window.location.hash.startsWith(this.restorePrefix)) {
+        const serialised = window.location.hash.substring(this.restorePrefix.length);
+        ($(`[data-form-backup-id="${this.uid}"]`) as any).deserialize(serialised);
+      }
+    } catch(err) {
+      console.error(`${this.prefix} Failed to resume: ${err.message}`);
+    }
+  }
+
   async anonymousSignIn() {
     const user = Firebase.auth().currentUser || (await Firebase.auth().signInAnonymously()).user;
     if (!user) {
@@ -65,10 +82,13 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         item.name = item.name.replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
         return item;
       });
+      const restoreUrl = new URL(window.location.href);
+      restoreUrl.hash = this.element.serialize();
       const backup = {
         updated: new Date().toISOString(),
         valid: (this.element[0] as HTMLFormElement).checkValidity(),
-        data: formData
+        data: formData,
+        restoreUrl: restoreUrl.href
       };
       await Firebase.database().ref(this.path).set(backup);
       console.log(`${this.prefix} Backed up`, backup);
