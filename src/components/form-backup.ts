@@ -57,7 +57,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         const serialised = window.location.hash.substring(this.restorePrefix.length);
         ($(`[data-form-backup-id="${this.uid}"]`) as any).deserialize(serialised);
         $(`[data-form-backup-id="${this.uid}"] input, [data-form-backup-id="${this.uid}"] select, [data-form-backup-id="${this.uid}"] textarea`).each((i, o) => {
-          $(o).trigger('change');
+          try { $(o).trigger('change'); } catch(err) {}
         });
       }
     } catch(err) {
