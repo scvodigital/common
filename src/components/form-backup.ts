@@ -11,8 +11,9 @@ import 'firebase/auth';
 import 'firebase/database';
 
 export class FormBackup extends BaseComponent<FormBackupConfig> {
+  isRecovering = false;
   get canBackup() {
-    return this.id && Firebase.auth().currentUser;
+    return this.id && Firebase.auth().currentUser && !this.isRecovering;
   }
   get prefix() {
     return `FormBackup [${this.config.name}] ->`;
@@ -52,12 +53,17 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
   restore() {
     try {
       if (window.location.hash.startsWith(this.restorePrefix)) {
+        this.isRecovering = true;
         const serialised = window.location.hash.substring(this.restorePrefix.length);
         ($(`[data-form-backup-id="${this.uid}"]`) as any).deserialize(serialised);
+        $(`[data-form-backup-id="${this.uid}"]`).find('input, select, textarea').each((i, o) => {
+          $(o).trigger('change');
+        });
       }
     } catch(err) {
       console.error(`${this.prefix} Failed to resume: ${err.message}`);
     }
+    this.isRecovering = false;
   }
 
   async anonymousSignIn() {
