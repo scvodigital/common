@@ -55,7 +55,7 @@
     "jquery": "^3.4.1",
     "jquery-deserialize": "^2.0.0-rc1",
     "json-6": "^1.0.2",
-    "json-logic-js": "^1.2.2",
+    "json-logic-js": "^2.0.0",
     "leaflet": "^1.5.1",
     "leaflet.markercluster": "^1.4.1",
     "mapbox.js": "^3.2.0",
