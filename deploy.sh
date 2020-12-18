@@ -29,15 +29,18 @@ elif [ $LOCAL = $REMOTE ]; then
   npm version patch
   echo -e "${PINK}STEP 5 of 7: Pushing all previous changes to 'development' branch${NC}"
   git push
-  echo -e "${PINK}STEP 6 of 7: Bringing 'production' branch up-to-date with 'development'${NC}"
-  git checkout production
-  git pull
-  git pull origin development
-  git push
-  echo -e "${PINK}STEP 7 of 7: Navigating back to 'development'${NC}"
-  git checkout development
+  # echo -e "${PINK}STEP 6 of 7: Bringing 'production' branch up-to-date with 'development'${NC}"
+  echo -e "${PINK}STEP 6 of 7: ???"
+  # git checkout production
+  # git pull
+  # git pull origin development
+  # git push
+  # echo -e "${PINK}STEP 7 of 7: Navigating back to 'development'${NC}"
+  # git checkout development
+  echo -e "${PINK}STEP 7 of 7: Running deployment script"
+  npm run publish
   echo -e "${PINK}FINISHED LOCAL DEPLOYMENT TASKS${NC}"
-  echo -e "${PINK}Navigate to https://travis-ci.com/github/scvodigital/$REPO to watch your deployment in the cloud!${NC}"
+  # echo -e "${PINK}Navigate to https://travis-ci.com/github/scvodigital/$REPO to watch your deployment in the cloud!${NC}"
 elif [ $LOCAL = $BASE ]; then
   echo -e "${RED}CANNOT DEPLOY: Need to pull${NC}"
 elif [ $REMOTE = $BASE ]; then
