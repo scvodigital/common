@@ -59,6 +59,11 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         $(`[data-form-backup-id="${this.uid}"] input, [data-form-backup-id="${this.uid}"] select, [data-form-backup-id="${this.uid}"] textarea`).each((i, o) => {
           try { $(o).trigger('change'); } catch(err) {}
         });
+        window.setTimeout(() => {
+          try {
+            (window as any).wFORMS.applyBehaviors(this.element);
+          } catch (err) {}
+        }, 100);
       }
     } catch(err) {
       console.error(`${this.prefix} Failed to resume: ${err.message}`);
