@@ -61,7 +61,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
         });
         window.setTimeout(() => {
           try {
-            (window as any).wFORMS.applyBehaviors(this.element);
+            (window as any).wFORMS.applyBehaviors(this.element[0]);
           } catch (err) {}
         }, 100);
       }
