@@ -5,7 +5,7 @@
         <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'coronavirus')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/support/coronavirus">Coronavirus Info Hub</a>
       </li>
       <li class="brand-fundingscotland">
-        <a class="text-link{{#ifAny (contains @root.request.url.hostname 'funding') (contains @root.request.url.hostname 'fs-')}} active{{/ifAny}}" href="https://fundingscotland.com" title="">Funding Scotland</a>
+        <a class="text-link{{#ifAny (contains @root.request.url.hostname 'funding') (contains @root.request.url.hostname 'fs-')}} active{{/ifAny}}" href="https://funding.scot" title="">Funding Scotland</a>
       </li>
       <li class="brand-goodmoves">
         <a class="text-link{{#if (contains @root.request.url.hostname 'goodmoves.')}} active{{/if}}" href="https://goodmoves.com" title="">Goodmoves</a>
