@@ -164,7 +164,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
               </p>
               <div class="form-group">
                 <label class="form-label" for="${emailId}">Email:</label>
-                <input class="form-input" type="email" id="${emailId} placeholder="charity@example.scot">
+                <input class="form-input" type="email" id="${emailId}" placeholder="charity@example.scot">
               </div>
             </div>
           </div>
