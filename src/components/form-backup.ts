@@ -146,8 +146,10 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     const emailId = `${this.uid}-recovery-link-email`;
     const submitId = `${this.uid}-recovery-link-submit`;
 
-    const $modal = $(`
-      <div class="modal" id="${formId}">
+    const $modal = document.createElement('div');
+    $modal.id = formId;
+    $modal.classList.add('modal');
+    $modal.innerHTML = `<div class="modal" id="${formId}">
         <a href="#close" class="modal-overlay" aria-label="Close"></a>
         <div class="modal-container">
           <div class="modal-header">
@@ -176,27 +178,30 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
           </div>
         </div>
       </div>
-    `).appendTo('document.body');
+    `;
 
-    const $email = $modal.find(`#${emailId}`);
-    const $submit = $modal.find(`#${submitId}`);
-    const $showModal = $(this.config.recoveryLinkButtonSelector);
+    document.body.appendChild($modal);
 
-    $showModal.on('click', () => {
-      $modal.addClass('active');
-      $email.focus();
+    const $email = $modal.querySelector(`#${emailId}`) as HTMLInputElement;
+    const $submit = $modal.querySelector(`#${submitId}`) as HTMLButtonElement;
+    const $showModal = Array.from(document.querySelectorAll(this.config.recoveryLinkButtonSelector)) as HTMLButtonElement[];
+
+    $showModal.forEach((button) => {
+      button.addEventListener('click', () => {
+        $modal.classList.add('active');
+        $email.focus();
+      });
     });
 
-    $submit.on('click', () => {
-      const emailElement = $email[0] as HTMLInputElement;
-      if (!emailElement || !emailElement.validity.valid) return;
+    $submit.addEventListener('click', () => {
+      if ($email.validity.valid) return;
 
       const body = {
         timestamp: this.timestamp,
         form_slug: this.config.slug,
         form_name: this.config.name,
         id: this.id,
-        email: $email.val(),
+        email: $email.value,
         uid: this.userId
       };
 
