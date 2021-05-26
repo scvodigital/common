@@ -16,7 +16,7 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     return this.id && Firebase.auth().currentUser && !this.isRecovering;
   }
   get prefix() {
-    return `FormBackup [${this.config.name}] ->`;
+    return `FormBackup [${this.config.slug}] ->`;
   }
   get restorePrefix() {
     return '#restore:';
@@ -27,12 +27,16 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     const id = ids.join('-').replace(/[\.\$\#\[\]\/]/g, '').substring(0, 128);
     return id;
   }
-  get path() {
+  get userId() {
     const user = Firebase.auth().currentUser;
-    const uid = user && user.uid || 'unknown';
-    return `/form_backups/${this.config.name}/${this.id}/${this.timestamp}/${uid}`;
+    const userId = user && user.uid || 'unknown';
+    return userId;
+  }
+  get path() {
+    return `/form_backups/${this.config.slug}/${this.id}/${this.timestamp}/${this.userId}`;
   }
   timestamp: string;
+  $recoveryLinkModal?: JQuery;
 
   constructor(element: Element | JQuery<HTMLElement>, componentManager: ComponentManager) {
     super(element, componentManager);
@@ -45,6 +49,8 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
       await this.anonymousSignIn();
       this.restore();
       this.element.on('change', this.formChange.bind(this));
+
+      this.setupRecoveryLinkForm();
     } catch(err) {
       console.error(`${this.prefix} Init error: ${err.message}`);
     }
@@ -132,10 +138,95 @@ export class FormBackup extends BaseComponent<FormBackupConfig> {
     }
     return '';
   }
+
+  setupRecoveryLinkForm() {
+    if (!this.config.recoveryLinkButtonSelector) return;
+
+    const formId = `${this.uid}-recovery-link-modal`;
+    const emailId = `${this.uid}-recovery-link-email`;
+    const submitId = `${this.uid}-recovery-link-submit`;
+
+    const $modal = document.createElement('div');
+    $modal.id = formId;
+    $modal.classList.add('modal');
+    $modal.innerHTML = `<div class="modal" id="${formId}">
+        <a href="#close" class="modal-overlay" aria-label="Close"></a>
+        <div class="modal-container">
+          <div class="modal-header">
+            <a href="#close" class="btn btn-clear float-right" aria-label="Close"></a>
+            <div class="modal-title h5">Send recovery link</div>
+          </div>
+          <div class="modal-body">
+            <div class="content">
+              <p>
+                Enter your email address below and click the "Send recovery link" button to be
+                emailed a unique link that lets you resume this form session. If you refresh the
+                page or leave and navigate back to this form, you will need to generate and send
+                a new recovery link.
+              </p>
+              <div class="form-group">
+                <label class="form-label" for="${emailId}">Email:</label>
+                <input class="form-input" type="email" id="${emailId}" placeholder="charity@example.scot">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="${submitId}">
+              <span class="fal fa-paper-plane">
+              Send recovery link
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild($modal);
+
+    const $email = $modal.querySelector(`#${emailId}`) as HTMLInputElement;
+    const $submit = $modal.querySelector(`#${submitId}`) as HTMLButtonElement;
+    const $showModal = Array.from(document.querySelectorAll(this.config.recoveryLinkButtonSelector)) as HTMLButtonElement[];
+
+    $showModal.forEach((button) => {
+      button.addEventListener('click', () => {
+        $modal.classList.add('active');
+        $email.focus();
+      });
+    });
+
+    $submit.addEventListener('click', () => {
+      if ($email.validity.valid) return;
+
+      const body = {
+        timestamp: this.timestamp,
+        form_slug: this.config.slug,
+        form_name: this.config.name,
+        id: this.id,
+        email: $email.value,
+        uid: this.userId
+      };
+
+      console.log('About to post the following data', body);
+
+      $.ajax({
+        url: '/fa-backup-email',
+        method: 'POST',
+        data: body,
+        contentType: 'application/json',
+        success: (...args: any[]) => {
+          console.log('Success', ...args);
+        },
+        error: (...args: any[]) => {
+          console.error('Error', ...args);
+        }
+      });
+    });
+  }
 }
 
 export interface FormBackupConfig {
+  slug: string;
   name: string;
+  recoveryLinkButtonSelector?: string;
   idsSelector: string;
   ignoreFields: string[];
 }
