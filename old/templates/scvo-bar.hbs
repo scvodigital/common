@@ -5,7 +5,7 @@
         <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'coronavirus')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/support/coronavirus">Coronavirus Info Hub</a>
       </li>
       <li class="brand-fundingscotland">
-        <a class="text-link{{#ifAny (contains @root.request.url.hostname 'funding') (contains @root.request.url.hostname 'fs-')}} active{{/ifAny}}" href="https://funding.scot" title="">Funding Scotland</a>
+        <a class="text-link{{#ifAny (contains @root.request.url.hostname 'funding') (contains @root.request.url.hostname 'fs-')}} active{{/ifAny}}" href="https://fundingscotland.com" title="">Funding Scotland</a>
       </li>
       <li class="brand-goodmoves">
         <a class="text-link{{#if (contains @root.request.url.hostname 'goodmoves.')}} active{{/if}}" href="https://goodmoves.com" title="">Goodmoves</a>
@@ -13,17 +13,11 @@
       <li class="brand-tfn">
         <a class="text-link{{#if (contains @root.request.url.hostname 'tfn.scot')}} active{{/if}}" href="https://tfn.scot" title="">TFN</a>
       </li>
-      {{!-- <li class="brand-charityawards">
-        <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'scottish-charity-awards')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/scottish-charity-awards" title="">Scottish Charity Awards</a>
-      </li> --}}
-      {{!-- <li class="brand-gathering">
-        <a class="text-link" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/the-gathering-2020" title="The Gathering - Scotland's largest event for charities, social enterprises and voluntary organisations">The Gathering</a>
-      </li> --}}
       <li class="brand-scvo">
         <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'about_membership')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/about/membership" title="">SCVO Membership</a>
       </li>
-      <li class="brand-scvo l-margin">
-        <a class="pull-right brand-logo no-ext no-underline{{#if (contains @root.request.url.hostname 'scvo.')}} active{{/if}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{else}}/{{/unless}}">
+      <li class="brand-scvo l-margin r-margin">
+        <a class="pull-right brand-logo no-ext no-underline{{#if (contains @root.request.url.hostname 'scvo.')}} active{{/if}} l-margin" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{else}}/{{/unless}}">
           <img src="{{~>asset_url url='images/logos/scvo-secondary.svg'}}" />
         </a>
       </li>
