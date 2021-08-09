@@ -14,7 +14,7 @@
         <a class="text-link{{#if (contains @root.request.url.hostname 'tfn.scot')}} active{{/if}}" href="https://tfn.scot" title="">TFN</a>
       </li>
       <li class="brand-scvo">
-        <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'about_membership')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/about/membership" title="">SCVO Membership</a>
+        <a class="text-link{{#ifAll (contains @root.request.url.hostname 'scvo.') (contains @root.request.params.path 'about_membership')}} active{{/ifAll}}" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{/unless}}/about/community/membership" title="">SCVO Membership</a>
       </li>
       <li class="brand-scvo l-margin r-margin">
         <a class="pull-right brand-logo no-ext no-underline{{#if (contains @root.request.url.hostname 'scvo.')}} active{{/if}} l-margin" href="{{#unless (contains @root.request.url.hostname 'scvo.')}}https://scvo.scot{{else}}/{{/unless}}">
