@@ -184,14 +184,6 @@ export class LocationBoxComponent {
       this.la.val(suggestion.district);
       this.lat.val(suggestion.point.lat);
       this.lng.val(suggestion.point.lon);
-      Array.from(document.querySelectorAll('input[name=sort]')).forEach((element) => {
-        try {
-          // @ts-ignore
-          element.value = 'distance';
-        } catch (err) {
-          console.error(`Could not set sort: ${err.message}`);
-        }
-      });
       this.selected = true;
     } else {
       this.textbox.typeahead('val', '');
@@ -200,16 +192,6 @@ export class LocationBoxComponent {
       this.tsiContact.val('');
       this.lat.val('');
       this.lng.val('');
-
-      Array.from(document.querySelectorAll('input[name=sort]')).forEach((element) => {
-        try {
-          // @ts-ignore
-          element.value = '';
-        } catch (err) {
-          console.error(`Could not set sort: ${err.message}`);
-        }
-      });
-
       this.selected = false;
     }
     this.textbox.typeahead('close');
