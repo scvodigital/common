@@ -985,7 +985,7 @@ a {
   background-color: white;
   padding: $unit/3 $unit/2;
   box-sizing: border-box;
-  border-radius: 2px;
+  border-radius: 4px;
   a .mdc-list-item__graphic {
     margin-right: $unit/2;
   }
@@ -1057,7 +1057,7 @@ a {
 .mdc-card.mini,
 .mdc-card.gist,
 .mdc-card.search-result {
-  border-radius: 2px;
+  border-radius: 7.333px;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -1282,7 +1282,7 @@ a {
   padding: $unit*(2/3) $unit;
   color: white;
   font-weight: 600;
-  border-radius: 2px 2px 0 0;
+  border-radius: 7.333px 7.333px 0 0;
 }
 .mdc-card.mini {
   .panel-heading {
@@ -1301,7 +1301,7 @@ a {
   .panel-heading {
     margin: $unit/2 0 $unit;
     padding: $unit/2;
-    border-radius: 2px;
+    border-radius: 7.333px;
     box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
   }
   .mdc-card__info--content-secondary-title {
@@ -1347,7 +1347,7 @@ a {
     }
   }
   #content-primary-tab-bar {
-    border-radius: 2px 2px 0 0;
+    border-radius: 7.333px 7.333px 0 0;
     .mdc-tab {
       flex: 1;
       line-height: $header-lower-height;
@@ -1361,7 +1361,7 @@ a {
     display: block;
   }
   .content-primary-info-container {
-    border-radius: 2px;
+    border-radius: 7.333px;
     background-color: white;
     box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
   }
@@ -1828,7 +1828,7 @@ body.shortlist {
     padding: 0 0 $unit;
     .mdc-card__media--content-secondary {
       line-height: 1;
-      border-radius: 2px;
+      border-radius: 7.333px;
       padding: $unit/2;
       box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     }
