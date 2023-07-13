@@ -763,7 +763,13 @@ a:hover {
 .provider-google.mdc-chip--selected,
 .provider-google.mdc-chip--selected:hover,
 #continue-with-google {
-  background-color: #DB3633 !important;
+  background-color: #4285F4 !important;
+}
+.chip.bg-google:focus,
+.chip.bg-google:hover,
+#continue-with-google:focus,
+#continue-with-google:hover {
+  background-color: #3367d6 !important;
 }
 .provider-twitter.mdc-chip--selected,
 .provider-twitter.mdc-chip--selected:hover,
@@ -773,7 +779,18 @@ a:hover {
 .provider-facebook.mdc-chip--selected,
 .provider-facebook.mdc-chip--selected:hover,
 #continue-with-facebook {
-  background-color: #2C5797 !important;
+  background-color: #17A9FD !important;
+}
+.social .fab.fa-facebook {
+  color: #17A9FD !important;
+  line-height: 1rem;
+  font-size: 1.05rem;
+}
+.chip.bg-facebook:focus,
+.chip.bg-facebook:hover,
+#continue-with-facebook:focus,
+#continue-with-facebook:hover {
+  background-color: #0165E1 !important;
 }
 
 .noselect {
